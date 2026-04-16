@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1775889002156,
-  "projectRoot": "C:\\Users\\USER\\Documents\\Project_AI\\광물실험실",
+  "lastScanned": 1776328402528,
+  "projectRoot": "C:\\Users\\USER\\Documents\\Project_AI\\escape_min",
   "techStack": {
     "languages": [
       {
@@ -48,7 +48,10 @@
       "public",
       "src"
     ],
-    "gitBranches": null
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
   },
   "customNotes": [],
   "directoryMap": {
@@ -56,7 +59,7 @@
       "path": "dist",
       "purpose": "Distribution/build output",
       "fileCount": 1,
-      "lastAccessed": 1775889002090,
+      "lastAccessed": 1776328402487,
       "keyFiles": [
         "index.html"
       ]
@@ -65,7 +68,7 @@
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 5,
-      "lastAccessed": 1775889002111,
+      "lastAccessed": 1776328402487,
       "keyFiles": [
         "CLAUDE.md",
         "Gemini01_[기획서] 탈출! 미치광이.md",
@@ -74,18 +77,25 @@
         "PROGRESS.md"
       ]
     },
+    "escape_lab_game": {
+      "path": "escape_lab_game",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1776328402500,
+      "keyFiles": []
+    },
     "escape_mineral_lab": {
       "path": "escape_mineral_lab",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1775889002112,
+      "lastAccessed": 1776328402501,
       "keyFiles": []
     },
     "images": {
       "path": "images",
       "purpose": null,
       "fileCount": 39,
-      "lastAccessed": 1775889002113,
+      "lastAccessed": 1776328402501,
       "keyFiles": [
         "biotite.png",
         "calcite.png",
@@ -98,14 +108,14 @@
       "path": "public",
       "purpose": "Public files",
       "fileCount": 0,
-      "lastAccessed": 1775889002113,
+      "lastAccessed": 1776328402502,
       "keyFiles": []
     },
     "src": {
       "path": "src",
       "purpose": "Source code",
       "fileCount": 1,
-      "lastAccessed": 1775889002114,
+      "lastAccessed": 1776328402502,
       "keyFiles": [
         "main.js"
       ]
@@ -114,7 +124,7 @@
       "path": "dist\\assets",
       "purpose": "Static assets",
       "fileCount": 12,
-      "lastAccessed": 1775889002120,
+      "lastAccessed": 1776328402503,
       "keyFiles": [
         "BaseScene-D8J6x4zG.js",
         "DoorScene-EJPifVtI.js",
@@ -125,7 +135,7 @@
       "path": "src\\data",
       "purpose": "Data files",
       "fileCount": 2,
-      "lastAccessed": 1775889002125,
+      "lastAccessed": 1776328402506,
       "keyFiles": [
         "audio-manifest.js",
         "minerals.js"
@@ -134,93 +144,39 @@
   },
   "hotPaths": [
     {
-      "path": "src\\scenes\\LabScene.js",
-      "accessCount": 34,
-      "lastAccessed": 1776297296402,
-      "type": "file"
-    },
-    {
-      "path": "src\\scenes\\EquipmentScene.js",
-      "accessCount": 30,
-      "lastAccessed": 1776296308585,
-      "type": "directory"
-    },
-    {
-      "path": "src\\systems\\MineralManager.js",
-      "accessCount": 13,
-      "lastAccessed": 1776306908050,
-      "type": "directory"
-    },
-    {
-      "path": "src\\ui\\UIManager.js",
-      "accessCount": 5,
-      "lastAccessed": 1775890292457,
-      "type": "file"
-    },
-    {
-      "path": "src\\scenes\\DoorScene.js",
-      "accessCount": 5,
-      "lastAccessed": 1775892719373,
-      "type": "file"
-    },
-    {
-      "path": "src\\systems\\AudioManager.js",
-      "accessCount": 2,
-      "lastAccessed": 1775890285264,
-      "type": "file"
-    },
-    {
-      "path": "src",
-      "accessCount": 2,
-      "lastAccessed": 1775892924264,
-      "type": "directory"
-    },
-    {
       "path": "index.html",
-      "accessCount": 2,
-      "lastAccessed": 1775893782841,
-      "type": "file"
-    },
-    {
-      "path": "src\\core\\GameApp.js",
-      "accessCount": 2,
-      "lastAccessed": 1775893792380,
-      "type": "file"
-    },
-    {
-      "path": "src\\data\\audio-manifest.js",
       "accessCount": 1,
-      "lastAccessed": 1775890059482,
-      "type": "file"
-    },
-    {
-      "path": "src\\core\\SceneManager.js",
-      "accessCount": 1,
-      "lastAccessed": 1775890143190,
+      "lastAccessed": 1776328430806,
       "type": "file"
     },
     {
       "path": "package.json",
       "accessCount": 1,
-      "lastAccessed": 1775890207067,
-      "type": "directory"
-    },
-    {
-      "path": "src\\core\\BaseScene.js",
-      "accessCount": 1,
-      "lastAccessed": 1775890207190,
+      "lastAccessed": 1776328430888,
       "type": "file"
     },
     {
-      "path": "",
+      "path": "progress.md",
       "accessCount": 1,
-      "lastAccessed": 1776297729783,
-      "type": "directory"
+      "lastAccessed": 1776328435666,
+      "type": "file"
     },
     {
       "path": "src\\data\\minerals.js",
       "accessCount": 1,
-      "lastAccessed": 1776297731902,
+      "lastAccessed": 1776328444139,
+      "type": "file"
+    },
+    {
+      "path": "src\\main.js",
+      "accessCount": 1,
+      "lastAccessed": 1776328444577,
+      "type": "file"
+    },
+    {
+      "path": "README.md",
+      "accessCount": 1,
+      "lastAccessed": 1776328493952,
       "type": "file"
     }
   ],
