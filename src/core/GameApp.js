@@ -5,7 +5,7 @@ import { MineralManager } from '../systems/MineralManager.js';
 import { SafetySystem } from '../systems/SafetySystem.js';
 import { AudioManager } from '../systems/AudioManager.js';
 
-const TEST_MODE = true;
+const TEST_MODE = false;
 
 export class GameApp {
   constructor() {
