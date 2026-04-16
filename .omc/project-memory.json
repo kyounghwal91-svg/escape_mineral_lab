@@ -144,6 +144,66 @@
   },
   "hotPaths": [
     {
+      "path": "src\\core\\GameApp.js",
+      "accessCount": 8,
+      "lastAccessed": 1776334411459,
+      "type": "file"
+    },
+    {
+      "path": "",
+      "accessCount": 4,
+      "lastAccessed": 1776334344431,
+      "type": "directory"
+    },
+    {
+      "path": "src\\scenes\\LabScene.js",
+      "accessCount": 4,
+      "lastAccessed": 1776335119560,
+      "type": "file"
+    },
+    {
+      "path": "src\\scenes\\EquipmentScene.js",
+      "accessCount": 3,
+      "lastAccessed": 1776330508532,
+      "type": "file"
+    },
+    {
+      "path": "src\\effects\\AcidEffect.js",
+      "accessCount": 3,
+      "lastAccessed": 1776335141165,
+      "type": "file"
+    },
+    {
+      "path": "src",
+      "accessCount": 3,
+      "lastAccessed": 1776335144605,
+      "type": "directory"
+    },
+    {
+      "path": "src\\systems\\AudioManager.js",
+      "accessCount": 3,
+      "lastAccessed": 1776335268061,
+      "type": "file"
+    },
+    {
+      "path": "vite.config.js",
+      "accessCount": 2,
+      "lastAccessed": 1776334344024,
+      "type": "file"
+    },
+    {
+      "path": "src\\main.js",
+      "accessCount": 2,
+      "lastAccessed": 1776334766996,
+      "type": "file"
+    },
+    {
+      "path": "src\\data\\minerals.js",
+      "accessCount": 2,
+      "lastAccessed": 1776334767250,
+      "type": "file"
+    },
+    {
       "path": "index.html",
       "accessCount": 1,
       "lastAccessed": 1776328430806,
@@ -162,40 +222,70 @@
       "type": "file"
     },
     {
-      "path": "src\\data\\minerals.js",
-      "accessCount": 1,
-      "lastAccessed": 1776328444139,
-      "type": "file"
-    },
-    {
-      "path": "src\\main.js",
-      "accessCount": 1,
-      "lastAccessed": 1776328444577,
-      "type": "file"
-    },
-    {
       "path": "README.md",
       "accessCount": 1,
       "lastAccessed": 1776328493952,
       "type": "file"
     },
     {
-      "path": "vite.config.js",
+      "path": "src\\core\\SceneManager.js",
       "accessCount": 1,
-      "lastAccessed": 1776329485079,
+      "lastAccessed": 1776330265208,
       "type": "file"
     },
     {
-      "path": "src\\core\\GameApp.js",
+      "path": "src\\core\\BaseScene.js",
       "accessCount": 1,
-      "lastAccessed": 1776329490126,
+      "lastAccessed": 1776330283782,
       "type": "file"
     },
     {
-      "path": "src",
+      "path": "src\\ui\\UIManager.js",
       "accessCount": 1,
-      "lastAccessed": 1776329498593,
-      "type": "directory"
+      "lastAccessed": 1776330318944,
+      "type": "file"
+    },
+    {
+      "path": "src\\scenes\\ResultScene.js",
+      "accessCount": 1,
+      "lastAccessed": 1776334335091,
+      "type": "file"
+    },
+    {
+      "path": "src\\systems\\StatusManager.js",
+      "accessCount": 1,
+      "lastAccessed": 1776334364107,
+      "type": "file"
+    },
+    {
+      "path": "public\\config.txt",
+      "accessCount": 1,
+      "lastAccessed": 1776334376174,
+      "type": "file"
+    },
+    {
+      "path": "src\\core\\Config.js",
+      "accessCount": 1,
+      "lastAccessed": 1776334384466,
+      "type": "file"
+    },
+    {
+      "path": "src\\systems\\MineralManager.js",
+      "accessCount": 1,
+      "lastAccessed": 1776334638201,
+      "type": "file"
+    },
+    {
+      "path": "src\\systems\\SafetySystem.js",
+      "accessCount": 1,
+      "lastAccessed": 1776334714527,
+      "type": "file"
+    },
+    {
+      "path": "src\\data\\audio-manifest.js",
+      "accessCount": 1,
+      "lastAccessed": 1776335220397,
+      "type": "file"
     }
   ],
   "userDirectives": []

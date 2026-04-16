@@ -119,7 +119,16 @@ export default class EquipmentScene extends BaseScene {
     this._buildEnterButton();
     this._buildStatusText();
     this._buildGuide();
-    this._showMonitorIntro();
+
+    if (data.fromLab) {
+      this._allMissionChecked = true;
+      this._missionCheckboxes.forEach(cb => {
+        cb.checked = true;
+        this._drawCheckbox(cb.gfx, true);
+      });
+    } else {
+      this._showMonitorIntro();
+    }
 
     // 이미 착용 중인 장비 복원
     for (const eq of EQUIPMENT) {
@@ -763,31 +772,31 @@ export default class EquipmentScene extends BaseScene {
         this.sceneManager.app.ticker.remove(fadeIn);
         this._monitorFadeInTicker = null;
         this.uiManager.showDialogue(
-          '흐흐흐... 10분 안에 열쇠 광물 3개를 찾아 문에 끼워넣지 못하면 넌 내 영원한 실험체가 될 것이다!',
-          () => {
-            const checkDismiss = () => {
-              if (!this.uiManager._dialogBox.visible) {
-                this.sceneManager.app.ticker.remove(checkDismiss);
-                let outT = 1;
-                const fadeOut = () => {
-                  outT -= 0.04;
-                  monitorCont.alpha = Math.max(outT, 0);
-                  if (outT <= 0) {
-                    this.sceneManager.app.ticker.remove(fadeOut);
-                    this.sceneManager.app.ticker.remove(updateEffect);
-                    this._monitorFadeOutTicker = null;
-                    this._monitorEffectTicker = null;
-                    if (monitorCont.parent) this.container.removeChild(monitorCont);
-                    monitorCont.destroy({ children: true });
-                  }
-                };
-                this._monitorFadeOutTicker = fadeOut;
-                this.sceneManager.app.ticker.add(fadeOut);
+          '흐흐흐... 10분 안에 열쇠 광물 3개를 찾아 문에 끼워넣지 못하면 넌 내 영원한 실험체가 될 것이다!'
+        );
+
+        // onComplete 안이 아닌 즉시 등록 — 타이핑 중 클릭해도 모니터가 반드시 닫힘
+        const checkDismiss = () => {
+          if (!this.uiManager._dialogBox.visible) {
+            this.sceneManager.app.ticker.remove(checkDismiss);
+            let outT = 1;
+            const fadeOut = () => {
+              outT -= 0.04;
+              monitorCont.alpha = Math.max(outT, 0);
+              if (outT <= 0) {
+                this.sceneManager.app.ticker.remove(fadeOut);
+                this.sceneManager.app.ticker.remove(updateEffect);
+                this._monitorFadeOutTicker = null;
+                this._monitorEffectTicker = null;
+                if (monitorCont.parent) this.container.removeChild(monitorCont);
+                monitorCont.destroy({ children: true });
               }
             };
-            this.sceneManager.app.ticker.add(checkDismiss);
+            this._monitorFadeOutTicker = fadeOut;
+            this.sceneManager.app.ticker.add(fadeOut);
           }
-        );
+        };
+        this.sceneManager.app.ticker.add(checkDismiss);
       }
     };
     AudioManager.instance.playSFX('monitor_on');
@@ -798,6 +807,12 @@ export default class EquipmentScene extends BaseScene {
   // ─── 정리 ─────────────────────────────────────────────────────────
   async onExit() {
     AudioManager.instance.stopBGM();
+
+    if (this.uiManager) {
+      this.uiManager.destroy();
+      this.uiManager = null;
+    }
+
     if (this._stageMove) {
       this.sceneManager.app.stage.off('pointermove', this._stageMove);
       this._stageMove = null;

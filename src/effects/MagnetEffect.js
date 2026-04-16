@@ -95,8 +95,16 @@ export class MagnetEffect {
 
     this._onDragMove = (ev) => {
       const p = this.container.toLocal(ev.global);
-      this._mineralCont.x = p.x - this._dragOffset.x;
-      this._mineralCont.y = p.y - this._dragOffset.y;
+      let tx = p.x - this._dragOffset.x;
+      let ty = p.y - this._dragOffset.y;
+
+      // Clamp to tray bounds (500x280)
+      const margin = 40;
+      tx = Math.max(margin, Math.min(500 - margin, tx));
+      ty = Math.max(margin, Math.min(280 - margin, ty));
+
+      this._mineralCont.x = tx;
+      this._mineralCont.y = ty;
       this._checkProximity();
     };
 

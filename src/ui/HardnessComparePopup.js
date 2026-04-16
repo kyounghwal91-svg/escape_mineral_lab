@@ -276,7 +276,17 @@ export class HardnessComparePopup {
     if (!this._dragging || this._resultShown) return;
 
     const local = event.data.getLocalPosition(this.container);
-    this._quartzSprite.position.set(local.x + this._dragOffset.x, local.y + this._dragOffset.y);
+    let targetX = local.x + this._dragOffset.x;
+    let targetY = local.y + this._dragOffset.y;
+
+    // Clamp to popup box (px, py, POP_W, POP_H)
+    const px = (1280 - POP_W) / 2;
+    const py = (720 - POP_H) / 2;
+    const margin = 40;
+    targetX = Math.max(px + margin, Math.min(px + POP_W - margin, targetX));
+    targetY = Math.max(py + margin, Math.min(py + POP_H - margin, targetY));
+
+    this._quartzSprite.position.set(targetX, targetY);
 
     const dx = this._quartzSprite.x - this._targetPos.x;
     const dy = this._quartzSprite.y - this._targetPos.y;

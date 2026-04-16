@@ -9,36 +9,52 @@ export default class ResultScene extends BaseScene {
     this._blinkTicker = null;
     this._stars = [];
     this._blinkTime = 0;
+    this._allowDelayedResultBGM = false;
   }
 
   async onEnter(data = {}) {
     await super.onEnter(data);
     const W = 1280, H = 720;
+    this._allowDelayedResultBGM = true;
 
     const condition = data.condition ?? 'failure';
     const statusManager = data.statusManager ?? null;
     const hp = statusManager ? statusManager.hp : 0;
     const timeStr = statusManager ? statusManager.getTimeFormatted() : '00:00';
 
+    // ── 이미지 로드 및 배경 설정 ───────────────────────────
+    const bgMap = {
+      perfect: 'images/result_sucess.png',
+      barely: 'images/result_barely.png',
+      failure: 'images/result_failed.png'
+    };
+    await PIXI.Assets.load(bgMap[condition]);
+
+    const bg = PIXI.Sprite.from(bgMap[condition]);
+    bg.width = W;
+    bg.height = H;
+    this.container.addChild(bg);
+
+    // ── 레이아웃 상수 (왼쪽 배치) ──────────────────────────
+    const LEFT_X = 120;
+    const TITLE_Y = H / 2 - 160;
+
     // ── 분기별 설정 ──────────────────────────────────────────
-    let bgColor, titleText, titleColor, subText, subColor, btnColor;
+    let titleText, titleColor, subText, subColor, btnColor;
 
     if (condition === 'perfect') {
-      bgColor    = 0x0a1628;
       titleText  = '완벽한 탈출!';
       titleColor = 0xf1c40f;
       subText    = 'HP 100을 유지한 채 모든 실험을 완료했습니다!';
       subColor   = 0xf9e4a0;
       btnColor   = 0x27ae60;
     } else if (condition === 'barely') {
-      bgColor    = 0x0d1b2a;
       titleText  = '겨우 탈출...';
       titleColor = 0x85c1e9;
       subText    = '가까스로 탈출에 성공했지만 부상을 입었습니다.';
       subColor   = 0xaed6f1;
       btnColor   = 0x2e86c1;
     } else {
-      bgColor    = 0x1a0000;
       titleText  = '실험 실패...';
       titleColor = 0xe74c3c;
       subText    = hp === 0
@@ -48,23 +64,18 @@ export default class ResultScene extends BaseScene {
       btnColor   = 0x922b21;
     }
 
-    // ── 배경 ─────────────────────────────────────────────────
-    const bg = new PIXI.Graphics();
-    bg.beginFill(bgColor);
-    bg.drawRect(0, 0, W, H);
-    bg.endFill();
-    this.container.addChild(bg);
-
     // ── 타이틀 ───────────────────────────────────────────────
     const title = new PIXI.Text(titleText, {
       fontFamily: 'Arial',
       fontSize: 52,
       fill: titleColor,
       fontWeight: 'bold',
-      align: 'center',
+      align: 'left',
+      dropShadow: true,
+      dropShadowColor: 0x000000,
+      dropShadowDistance: 4,
     });
-    title.anchor.set(0.5);
-    title.position.set(W / 2, H / 2 - 160);
+    title.position.set(LEFT_X, TITLE_Y);
     this.container.addChild(title);
 
     // ── 부제 ─────────────────────────────────────────────────
@@ -72,31 +83,48 @@ export default class ResultScene extends BaseScene {
       fontFamily: 'Arial',
       fontSize: 24,
       fill: subColor,
-      align: 'center',
+      align: 'left',
+      wordWrap: true,
+      wordWrapWidth: 500,
+      dropShadow: true,
+      dropShadowColor: 0x000000,
+      dropShadowDistance: 2,
     });
-    sub.anchor.set(0.5);
-    sub.position.set(W / 2, H / 2 - 95);
+    sub.position.set(LEFT_X, TITLE_Y + 70);
     this.container.addChild(sub);
 
     // ── 분기별 추가 요소 ─────────────────────────────────────
     if (condition === 'perfect') {
       this._buildStars();
     } else if (condition === 'barely') {
-      this._buildHpBar(hp, W, H);
+      this._buildHpBar(hp, LEFT_X, TITLE_Y + 120);
     }
 
     // ── 통계 박스 ────────────────────────────────────────────
-    this._buildStatsBox(hp, timeStr, W, H);
+    this._buildStatsBox(hp, timeStr, LEFT_X, TITLE_Y + 180);
 
     // ── 다시 시작 버튼 ───────────────────────────────────────
-    const btn = this._createButton('다시 시작', W / 2, H / 2 + 160, btnColor, () => {
+    const btn = this._createButton('다시 시작', LEFT_X + 100, TITLE_Y + 320, btnColor, () => {
       this.sceneManager?.changeScene('intro');
     });
     this.container.addChild(btn);
 
     // ── 오디오 ──────────────────────────────────────────────────
-    AudioManager.instance.playBGM('result');
-    AudioManager.instance.playSFX(`result_${condition}`);
+    if (condition === 'failure') {
+      console.log('[ResultScene] Entered failure ending');
+      console.log('[ResultScene] Starting failure SFX: result_failure');
+      AudioManager.instance.playSFX('result_failure', {
+        complete: () => {
+          if (this._allowDelayedResultBGM) {
+            console.log('[ResultScene] Starting result BGM after failure SFX: result');
+            AudioManager.instance.playBGM('result');
+          }
+        },
+      });
+    } else {
+      AudioManager.instance.playBGM('result');
+      AudioManager.instance.playSFX(`result_${condition}`);
+    }
 
     // ── 애니메이션 ticker ────────────────────────────────────
     if (condition === 'perfect' && this._stars.length > 0) {
@@ -119,6 +147,7 @@ export default class ResultScene extends BaseScene {
   }
 
   async onExit() {
+    this._allowDelayedResultBGM = false;
     AudioManager.instance.stopBGM();
     if (this._ticker) {
       this.sceneManager?.app?.ticker.remove(this._ticker);
@@ -159,10 +188,8 @@ export default class ResultScene extends BaseScene {
   }
 
   // ── HP 바 (barely) ───────────────────────────────────────
-  _buildHpBar(hp, W, H) {
+  _buildHpBar(hp, x, y) {
     const barW = 300, barH = 20;
-    const x = W / 2 - barW / 2;
-    const y = H / 2 - 55;
 
     const barBg = new PIXI.Graphics();
     barBg.beginFill(0x333333);
@@ -181,10 +208,8 @@ export default class ResultScene extends BaseScene {
   }
 
   // ── 통계 박스 ────────────────────────────────────────────
-  _buildStatsBox(hp, timeStr, W, H) {
+  _buildStatsBox(hp, timeStr, bx, by) {
     const boxW = 360, boxH = 80;
-    const bx = W / 2 - boxW / 2;
-    const by = H / 2 - 10;
 
     const boxBg = new PIXI.Graphics();
     boxBg.beginFill(0x000000, 0.5);

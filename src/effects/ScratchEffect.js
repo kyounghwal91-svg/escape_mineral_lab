@@ -114,8 +114,14 @@ export class ScratchEffect {
 
     this._onDragMove = (ev) => {
       const p = this.container.toLocal(ev.global);
-      const cx = p.x - this._dragOffset.x;
-      const cy = p.y - this._dragOffset.y;
+      let cx = p.x - this._dragOffset.x;
+      let cy = p.y - this._dragOffset.y;
+
+      // Clamp to tray bounds (500x280)
+      const margin = 40;
+      cx = Math.max(margin, Math.min(500 - margin, cx));
+      cy = Math.max(margin, Math.min(280 - margin, cy));
+
       this._mineralCont.x = cx;
       this._mineralCont.y = cy;
       this._tryDraw(cx, cy);

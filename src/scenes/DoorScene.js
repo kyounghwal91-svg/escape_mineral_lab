@@ -58,7 +58,6 @@ export default class DoorScene extends BaseScene {
     this._buildFeedback(W, H);
     this._buildSubmitButton(W, H);
     this._buildBackButton(W, H);
-    this._buildHintButton(W, H);
     this._buildLogbookPanel(W, H);
     this._buildCluePanel(W, H);
 
@@ -502,13 +501,13 @@ export default class DoorScene extends BaseScene {
   // ─── Clue panel (right side) ──────────────────────────────────────────────
 
   /**
-   * Builds a right-side panel listing all clues unlocked in LabScene.
-   * Clue data comes from mineralManager.unlockedClues (persists across scenes).
+   * Builds a right-side panel listing the 3 mineral hints revealed in LabScene.
+   * Uses mineralManager.getHintPanelState() to show Stage 1 and Stage 2 hints.
    */
   _buildCluePanel(W, H) {
     const PX = 930, PY = 86, PW = 310, PH = 450;
-    const ITEM_H = 56;
     const TY = 58;
+    const PANEL_H = Math.floor((PH - TY - 12) / 3);
 
     const panel = new PIXI.Container();
     panel.position.set(PX, PY);
@@ -534,66 +533,68 @@ export default class DoorScene extends BaseScene {
     hdrTxt.position.set(16, 12);
     panel.addChild(hdrTxt);
 
-    const clues = this.mineralManager.unlockedClues;
-    const hdrSub = new PIXI.Text(`실험실 실험으로 획득 · ${clues.length}개 발견됨`, {
+    const states = this.mineralManager.getHintPanelState();
+    const discoveredCount = states.filter(s => s.level > 0).length;
+
+    const hdrSub = new PIXI.Text(`열쇠 광물 힌트 · ${discoveredCount}개 발견됨`, {
       fontFamily: 'Arial', fontSize: 10, fill: 0x5d88a9,
     });
     hdrSub.position.set(16, 30);
     panel.addChild(hdrSub);
 
-    // Clip panel content so overflow items are hidden
-    const clipMask = new PIXI.Graphics();
-    clipMask.beginFill(0xffffff);
-    clipMask.drawRoundedRect(0, TY, PW, PH - TY, 8);
-    clipMask.endFill();
-    panel.addChild(clipMask);
-    panel.mask = clipMask;
+    states.forEach((state, i) => {
+      const yOff = TY + i * (PANEL_H + 4);
+      const unlocked = state.level > 0;
+      const expanded = state.level > 1;
 
-    if (clues.length === 0) {
-      // Placeholder
-      const empty = new PIXI.Text(
-        '아직 발견된 단서가 없습니다.\n\n실험실로 돌아가 광물 실험을\n충분히 진행해보세요.',
-        {
-          fontFamily: 'Arial', fontSize: 13, fill: 0x4a6580,
-          align: 'center', wordWrap: true, wordWrapWidth: PW - 40,
-        }
-      );
-      empty.anchor.set(0.5, 0.5);
-      empty.position.set(PW / 2, TY + (PH - TY) / 2);
-      panel.addChild(empty);
-    } else {
-      clues.forEach((clue, i) => {
-        const yOff = TY + i * ITEM_H + (i > 0 ? 4 : 0);
+      const rowBg = new PIXI.Graphics();
+      if (unlocked) {
+        rowBg.beginFill(0x0a2218, 0.92);
+        rowBg.lineStyle(1.5, 0x27ae60, 0.6);
+      } else {
+        rowBg.beginFill(0x0c1b28, 0.92);
+        rowBg.lineStyle(1, 0x1e3a52, 0.5);
+      }
+      rowBg.drawRoundedRect(8, yOff, PW - 16, PANEL_H, 8);
+      rowBg.endFill();
+      panel.addChild(rowBg);
 
-        const rowBg = new PIXI.Graphics();
-        rowBg.beginFill(i % 2 === 0 ? 0x102231 : 0x0c1b28, 0.92);
-        rowBg.drawRoundedRect(8, yOff, PW - 16, ITEM_H - 4, 8);
-        rowBg.endFill();
-        panel.addChild(rowBg);
+      // Numbered badge
+      const badge = new PIXI.Graphics();
+      badge.beginFill(unlocked ? 0x27ae60 : 0x1a3a5c, 0.9);
+      badge.drawCircle(0, 0, 10);
+      badge.endFill();
+      badge.position.set(24, yOff + 18);
+      panel.addChild(badge);
 
-        // Numbered badge
-        const badge = new PIXI.Graphics();
-        badge.beginFill(0xf0a030, 0.9);
-        badge.drawCircle(0, 0, 10);
-        badge.endFill();
-        badge.position.set(22, yOff + (ITEM_H - 4) / 2);
-        panel.addChild(badge);
-
-        const numTxt = new PIXI.Text(`${i + 1}`, {
-          fontFamily: 'Arial', fontSize: 10, fill: 0x1a1a1a, fontWeight: 'bold',
-        });
-        numTxt.anchor.set(0.5, 0.5);
-        numTxt.position.set(22, yOff + (ITEM_H - 4) / 2);
-        panel.addChild(numTxt);
-
-        const clueTxt = new PIXI.Text(clue.text, {
-          fontFamily: 'Arial', fontSize: 11, fill: 0xcce4ff,
-          wordWrap: true, wordWrapWidth: PW - 54, lineHeight: 16,
-        });
-        clueTxt.position.set(38, yOff + 7);
-        panel.addChild(clueTxt);
+      const numTxt = new PIXI.Text(`${i + 1}`, {
+        fontFamily: 'Arial', fontSize: 10, fill: unlocked ? 0xffffff : 0xaaccee, fontWeight: 'bold',
       });
-    }
+      numTxt.anchor.set(0.5, 0.5);
+      numTxt.position.set(24, yOff + 18);
+      panel.addChild(numTxt);
+
+      if (!unlocked) {
+        const lockTxt = new PIXI.Text('힌트 잠김', {
+          fontFamily: 'Arial', fontSize: 12, fill: 0x3a5a7a,
+        });
+        lockTxt.anchor.set(0.5, 0.5);
+        lockTxt.position.set(PW / 2, yOff + PANEL_H / 2);
+        panel.addChild(lockTxt);
+      } else {
+        const lines = [`• 1단계 힌트: ${state.stage1}`];
+        if (expanded) {
+          lines.push(`• 2단계 힌트: ${state.stage2}`);
+        }
+
+        const clueTxt = new PIXI.Text(lines.join('\n\n'), {
+          fontFamily: 'Arial', fontSize: 14, fill: 0xcce4ff,
+          wordWrap: true, wordWrapWidth: PW - 54, lineHeight: 20,
+        });
+        clueTxt.position.set(42, yOff + 8);
+        panel.addChild(clueTxt);
+      }
+    });
 
     this.container.addChild(panel);
     this._cluePanel = panel;
@@ -679,41 +680,10 @@ export default class DoorScene extends BaseScene {
     this.container.addChild(btn);
   }
 
-  /** Shows the experiment-unlocked clue list (same data as the clue panel). */
-  _buildHintButton(W, H) {
-    const btn = new PIXI.Container();
-    const bg = new PIXI.Graphics();
-    bg.beginFill(0x1e8449);
-    bg.drawRoundedRect(0, 0, 110, 34, 8);
-    bg.endFill();
-    btn.addChild(bg);
-    const txt = new PIXI.Text('💡 단서 목록', { fontFamily: 'Arial', fontSize: 13, fill: 0xffffff });
-    txt.anchor.set(0.5, 0.5);
-    txt.position.set(55, 17);
-    btn.addChild(txt);
-    btn.position.set(W - 130, 20);
-    btn.eventMode = 'static';
-    btn.cursor = 'pointer';
-    btn.on('pointerdown', () => {
-      if (this._popup) return;
-      const clues = this.mineralManager.unlockedClues;
-      if (clues.length === 0) {
-        this._showNotePopup(
-          '아직 발견된 단서가 없습니다.\n실험실로 돌아가 더 많은 실험을 진행해보세요.',
-          '단서 목록'
-        );
-      } else {
-        const body = clues.map((c, i) => `${i + 1}. ${c.text}`).join('\n\n');
-        this._showNotePopup(body, `발견된 단서 목록 (${clues.length}개)`);
-      }
-    });
-    this.container.addChild(btn);
-  }
-
   // ─── Logbook panel (experiment record, kept from original) ────────────────
 
   _buildLogbookPanel(W, H) {
-    const PX = 20, PY = 86, PW = 320, PH = 440;
+    const PX = 20, PY = 86, PW = 340, PH = 408;
     const panel = new PIXI.Container();
     panel.position.set(PX, PY);
 
@@ -738,18 +708,18 @@ export default class DoorScene extends BaseScene {
     panel.addChild(hdrTxt);
 
     const hdrSub = new PIXI.Text('실험실에서 기록된 결과', {
-      fontFamily: 'Arial', fontSize: 10, fill: 0x5d88a9,
+      fontFamily: 'Arial', fontSize: 12, fill: 0x5d88a9,
     });
     hdrSub.position.set(16, 30);
     panel.addChild(hdrSub);
 
     const COLS = [
-      { key: 'name',     w: 74, label: '광물' },
-      { key: 'color',    w: 42, label: '색' },
-      { key: 'streak',   w: 44, label: '조흔' },
-      { key: 'acid',     w: 50, label: '염산' },
-      { key: 'magnet',   w: 40, label: '자성' },
-      { key: 'hardness', w: 46, label: '긁힘' },
+      { key: 'name',     w: 80, label: '광물' },
+      { key: 'color',    w: 46, label: '색' },
+      { key: 'streak',   w: 48, label: '조흔' },
+      { key: 'acid',     w: 54, label: '염산' },
+      { key: 'magnet',   w: 44, label: '자성' },
+      { key: 'hardness', w: 48, label: '긁힘' },
     ];
     const NO_HARDNESS = ['feldspar', 'biotite', 'magnetite'];
     const ROW_H = 62, HDR_H = 28, TX = 10, TY = 58;
@@ -764,7 +734,7 @@ export default class DoorScene extends BaseScene {
     let colX = TX;
     COLS.forEach(col => {
       const t = new PIXI.Text(col.label, {
-        fontFamily: 'Arial', fontSize: 10, fill: 0x78b8de, fontWeight: 'bold',
+        fontFamily: 'Arial', fontSize: 12, fill: 0x78b8de, fontWeight: 'bold',
       });
       t.anchor.set(0.5, 0.5);
       t.position.set(colX + col.w / 2, TY + HDR_H / 2);
@@ -811,7 +781,7 @@ export default class DoorScene extends BaseScene {
       panel.addChild(sprite);
 
       const nmTxt = new PIXI.Text(mineral.name, {
-        fontFamily: 'Arial', fontSize: 11, fill: 0xddeeff, fontWeight: 'bold',
+        fontFamily: 'Arial', fontSize: 13, fill: 0xddeeff, fontWeight: 'bold',
       });
       nmTxt.anchor.set(0, 0.5);
       nmTxt.position.set(TX + 32, rowY + 22);
@@ -822,7 +792,7 @@ export default class DoorScene extends BaseScene {
       COLS.slice(1).forEach(col => {
         const { text, color } = fmtMap[col.key](rec, mineral.id);
         const cell = new PIXI.Text(text, {
-          fontFamily: 'Arial', fontSize: 9, fill: color,
+          fontFamily: 'Arial', fontSize: 12, fill: color,
           fontWeight: text !== '?' ? 'bold' : 'normal',
         });
         cell.anchor.set(0.5, 0.5);

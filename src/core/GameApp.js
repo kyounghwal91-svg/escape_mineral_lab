@@ -4,8 +4,7 @@ import { StatusManager } from '../systems/StatusManager.js';
 import { MineralManager } from '../systems/MineralManager.js';
 import { SafetySystem } from '../systems/SafetySystem.js';
 import { AudioManager } from '../systems/AudioManager.js';
-
-const TEST_MODE = false;
+import { loadConfig } from './Config.js';
 
 export class GameApp {
   constructor() {
@@ -31,6 +30,12 @@ export class GameApp {
     // 반응형 리사이즈
     this._setupResize();
 
+    // config.txt 로드
+    const config = await loadConfig();
+    if (config.testMode) {
+      console.log('[Config] 테스트 모드 ON', config);
+    }
+
     // 오디오 프리로드
     await AudioManager.instance.preload();
 
@@ -55,12 +60,35 @@ export class GameApp {
       this.sceneManager.update(delta);
     });
 
-    // 첫 씬 시작
-    if (TEST_MODE) {
-      await this.sceneManager.changeScene('equipment');
-    } else {
-      await this.sceneManager.changeScene('intro');
+    // 첫 씬 시작 (config.txt 기반)
+    await this._startFromConfig(config);
+  }
+
+  async _startFromConfig(config) {
+    const { startScene, ending } = config;
+
+    // result 씬은 condition 만 넘기면 됨 (statusManager 없어도 동작)
+    if (startScene === 'result') {
+      await this.sceneManager.changeScene('result', { condition: ending });
+      return;
     }
+
+    // lab / equipment / door 씬은 공유 시스템 인스턴스가 필요
+    if (startScene === 'lab' || startScene === 'equipment' || startScene === 'door') {
+      const statusManager  = new StatusManager();
+      const mineralManager = new MineralManager();
+      mineralManager.init();
+      const safetySystem = new SafetySystem();
+      await this.sceneManager.changeScene(startScene, {
+        statusManager,
+        mineralManager,
+        safetySystem,
+      });
+      return;
+    }
+
+    // intro (기본)
+    await this.sceneManager.changeScene('intro');
   }
 
   _setupResize() {

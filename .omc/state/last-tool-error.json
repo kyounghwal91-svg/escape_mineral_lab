@@ -1,7 +1,0 @@
-{
-  "tool_name": "Read",
-  "tool_input_preview": "{\"file_path\":\"C:\\\\Users\\\\USER\\\\Documents\\\\Project_AI\\\\광물실험실\\\\src\\\\scenes\\\\LabScene.js\"}",
-  "error": "File content (10505 tokens) exceeds maximum allowed tokens (10000). Use offset and limit parameters to read specific portions of the file, or search for specific content instead of reading the whole file.",
-  "timestamp": "2026-04-11T06:47:28.613Z",
-  "retry_count": 1
-}

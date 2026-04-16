@@ -2,15 +2,12 @@ import { sound } from '@pixi/sound';
 import { AUDIO_MANIFEST } from '../data/audio-manifest.js';
 
 /**
- * AudioManager — 싱글톤
- *
- * 사용법:
- *   AudioManager.instance.playBGM('lab');
- *   AudioManager.instance.playSFX('scratch');
- *   AudioManager.instance.stopBGM();
+ * AudioManager - singleton wrapper around @pixi/sound.
+ * Audio playback is deferred until the first user gesture to avoid
+ * browser autoplay warnings when scenes are opened programmatically.
  */
 export class AudioManager {
-  /** @type {AudioManager} */
+  /** @type {AudioManager | null} */
   static _instance = null;
 
   static get instance() {
@@ -24,72 +21,226 @@ export class AudioManager {
     if (AudioManager._instance) {
       return AudioManager._instance;
     }
-    this._currentBGM = null;  // 현재 재생 중인 BGM 키
+
+    this._currentBGM = null;
     this._bgmVolume = 1.0;
     this._sfxVolume = 1.0;
     this._muted = false;
     this._loaded = false;
+    this._failedKeys = new Set();
+    this._checkedSources = new Map();
+    this._pendingActions = [];
+    this._preloadRequested = false;
+    this._preloadPromise = null;
+    this._audioUnlocked = typeof window === 'undefined';
+    this._unlockHandler = this._onUserGesture.bind(this);
+
+    this._bindUnlockEvents();
   }
 
-  /**
-   * 매니페스트에 정의된 모든 에셋을 프리로드
-   * @returns {Promise<void>}
-   */
   async preload() {
     if (this._loaded) return;
-
-    const entries = [
-      ...Object.entries(AUDIO_MANIFEST.bgm),
-      ...Object.entries(AUDIO_MANIFEST.sfx),
-    ];
-
-    const addPromises = entries.map(([key, cfg]) => {
-      return new Promise((resolve) => {
-        if (sound.exists(key)) {
-          resolve();
-          return;
-        }
-        sound.add(key, {
-          url: cfg.src,
-          loop: cfg.loop ?? false,
-          volume: cfg.volume ?? 1.0,
-          preload: true,
-          loaded: (_err, _s) => resolve(),
-        });
-      });
-    });
-
-    await Promise.all(addPromises);
-    this._loaded = true;
+    if (!this._audioUnlocked) {
+      this._preloadRequested = true;
+      return;
+    }
+    await this._ensurePreloaded();
   }
 
-  /**
-   * BGM 재생 (이전 BGM은 자동으로 중지)
-   * @param {string} key  AUDIO_MANIFEST.bgm의 키
-   * @param {object} [options]
-   */
   playBGM(key, options = {}) {
     if (!AUDIO_MANIFEST.bgm[key]) {
       console.warn(`[AudioManager] 알 수 없는 BGM 키: ${key}`);
       return;
     }
+    if (this._failedKeys.has(key)) return;
     if (this._currentBGM === key) return;
 
     this.stopBGM();
-
-    const cfg = AUDIO_MANIFEST.bgm[key];
     this._currentBGM = key;
 
     if (this._muted) return;
+    if (!this._audioUnlocked) {
+      this._queueAction({ kind: 'bgm', key, options });
+      return;
+    }
 
-    // 브라우저 Autoplay Policy로 AudioContext가 suspended 상태일 경우 재개
+    this._playBGMNow(key, options);
+  }
+
+  stopBGM() {
+    this._pendingActions = this._pendingActions.filter((action) => action.kind !== 'bgm');
+    if (this._currentBGM) {
+      sound.stop(this._currentBGM);
+      this._currentBGM = null;
+    }
+  }
+
+  pauseBGM() {
+    if (this._currentBGM) sound.pause(this._currentBGM);
+  }
+
+  resumeBGM() {
+    if (this._currentBGM) sound.resume(this._currentBGM);
+  }
+
+  playSFX(key, options = {}) {
+    if (!AUDIO_MANIFEST.sfx[key]) {
+      console.warn(`[AudioManager] 알 수 없는 SFX 키: ${key}`);
+      return;
+    }
+    if (this._failedKeys.has(key)) return;
+    if (this._muted) return;
+
+    if (!this._audioUnlocked) {
+      this._queueAction({ kind: 'sfx', key, options });
+      return;
+    }
+
+    this._playSFXNow(key, options);
+  }
+
+  setBGMVolume(v) {
+    this._bgmVolume = Math.max(0, Math.min(1, v));
+    if (this._currentBGM) {
+      const cfg = AUDIO_MANIFEST.bgm[this._currentBGM];
+      sound.volume(this._currentBGM, (cfg.volume ?? 1.0) * this._bgmVolume);
+    }
+  }
+
+  setSFXVolume(v) {
+    this._sfxVolume = Math.max(0, Math.min(1, v));
+  }
+
+  toggleMute() {
+    this._muted = !this._muted;
+    sound.volumeAll = this._muted ? 0 : 1;
+    return this._muted;
+  }
+
+  get muted() {
+    return this._muted;
+  }
+
+  async _ensurePreloaded() {
+    if (this._loaded) return;
+    if (this._preloadPromise) {
+      await this._preloadPromise;
+      return;
+    }
+
+    this._preloadPromise = (async () => {
+      const entries = [
+        ...Object.entries(AUDIO_MANIFEST.bgm),
+        ...Object.entries(AUDIO_MANIFEST.sfx),
+      ];
+
+      const addPromises = entries.map(([key, cfg]) => new Promise(async (resolve) => {
+        if (sound.exists(key)) {
+          resolve();
+          return;
+        }
+
+        const exists = await this._sourceExists(cfg.src);
+        if (!exists) {
+          this._failedKeys.add(key);
+          resolve();
+          return;
+        }
+
+        sound.add(key, {
+          url: cfg.src,
+          loop: cfg.loop ?? false,
+          volume: cfg.volume ?? 1.0,
+          preload: true,
+          loaded: (err) => {
+            if (err) {
+              this._failedKeys.add(key);
+            }
+            resolve();
+          },
+        });
+      }));
+
+      await Promise.all(addPromises);
+      this._loaded = true;
+      this._preloadRequested = false;
+    })();
+
+    try {
+      await this._preloadPromise;
+    } finally {
+      this._preloadPromise = null;
+    }
+  }
+
+  async _onUserGesture() {
+    if (this._audioUnlocked) return;
+
+    this._audioUnlocked = true;
+    this._unbindUnlockEvents();
+    await this._resumeAudioContext();
+
+    if (this._preloadRequested) {
+      await this._ensurePreloaded();
+    }
+
+    this._flushPendingActions();
+  }
+
+  _bindUnlockEvents() {
+    if (typeof window === 'undefined' || this._audioUnlocked) return;
+
+    const opts = { passive: true };
+    window.addEventListener('pointerdown', this._unlockHandler, opts);
+    window.addEventListener('keydown', this._unlockHandler, opts);
+    window.addEventListener('touchstart', this._unlockHandler, opts);
+    window.addEventListener('mousedown', this._unlockHandler, opts);
+  }
+
+  _unbindUnlockEvents() {
+    if (typeof window === 'undefined') return;
+
+    window.removeEventListener('pointerdown', this._unlockHandler);
+    window.removeEventListener('keydown', this._unlockHandler);
+    window.removeEventListener('touchstart', this._unlockHandler);
+    window.removeEventListener('mousedown', this._unlockHandler);
+  }
+
+  _queueAction(action) {
+    if (action.kind === 'bgm') {
+      this._pendingActions = this._pendingActions.filter((item) => item.kind !== 'bgm');
+    }
+    this._pendingActions.push(action);
+  }
+
+  _flushPendingActions() {
+    const pending = this._pendingActions;
+    this._pendingActions = [];
+
+    pending.forEach((action) => {
+      if (action.kind === 'bgm') {
+        if (this._currentBGM === action.key) {
+          this._playBGMNow(action.key, action.options);
+        }
+        return;
+      }
+      this._playSFXNow(action.key, action.options);
+    });
+  }
+
+  async _resumeAudioContext() {
     try {
       const ctx = sound.context?.audioContext;
       if (ctx && ctx.state === 'suspended') {
-        ctx.resume();
+        await ctx.resume();
       }
     } catch (_) {}
+  }
 
+  _playBGMNow(key, options = {}) {
+    const cfg = AUDIO_MANIFEST.bgm[key];
+
+    this._resumeAudioContext();
     try {
       sound.play(key, {
         loop: cfg.loop ?? true,
@@ -102,37 +253,10 @@ export class AudioManager {
     }
   }
 
-  /** 현재 BGM 중지 */
-  stopBGM() {
-    if (this._currentBGM) {
-      sound.stop(this._currentBGM);
-      this._currentBGM = null;
-    }
-  }
-
-  /** 현재 BGM 일시정지 */
-  pauseBGM() {
-    if (this._currentBGM) sound.pause(this._currentBGM);
-  }
-
-  /** 일시정지된 BGM 재개 */
-  resumeBGM() {
-    if (this._currentBGM) sound.resume(this._currentBGM);
-  }
-
-  /**
-   * SFX 1회 재생
-   * @param {string} key  AUDIO_MANIFEST.sfx의 키
-   * @param {object} [options]
-   */
-  playSFX(key, options = {}) {
-    if (!AUDIO_MANIFEST.sfx[key]) {
-      console.warn(`[AudioManager] 알 수 없는 SFX 키: ${key}`);
-      return;
-    }
-    if (this._muted) return;
-
+  _playSFXNow(key, options = {}) {
     const cfg = AUDIO_MANIFEST.sfx[key];
+
+    this._resumeAudioContext();
     try {
       sound.play(key, {
         volume: (cfg.volume ?? 1.0) * this._sfxVolume,
@@ -143,35 +267,19 @@ export class AudioManager {
     }
   }
 
-  /**
-   * BGM 마스터 볼륨 설정 (0.0 ~ 1.0)
-   * @param {number} v
-   */
-  setBGMVolume(v) {
-    this._bgmVolume = Math.max(0, Math.min(1, v));
-    if (this._currentBGM) {
-      const cfg = AUDIO_MANIFEST.bgm[this._currentBGM];
-      sound.volume(this._currentBGM, (cfg.volume ?? 1.0) * this._bgmVolume);
+  async _sourceExists(url) {
+    if (this._checkedSources.has(url)) {
+      return this._checkedSources.get(url);
     }
-  }
 
-  /**
-   * SFX 마스터 볼륨 설정 (0.0 ~ 1.0)
-   * @param {number} v
-   */
-  setSFXVolume(v) {
-    this._sfxVolume = Math.max(0, Math.min(1, v));
-  }
+    const existsPromise = fetch(url, {
+      method: 'HEAD',
+      cache: 'no-store',
+    })
+      .then((response) => response.ok)
+      .catch(() => false);
 
-  /** 전체 음소거 토글 */
-  toggleMute() {
-    this._muted = !this._muted;
-    sound.volumeAll = this._muted ? 0 : 1;
-    return this._muted;
-  }
-
-  /** 음소거 여부 */
-  get muted() {
-    return this._muted;
+    this._checkedSources.set(url, existsPromise);
+    return existsPromise;
   }
 }
