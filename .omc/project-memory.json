@@ -1,0 +1,228 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1775889002156,
+  "projectRoot": "C:\\Users\\USER\\Documents\\Project_AI\\광물실험실",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "vite",
+        "version": "5.0.0",
+        "category": "build"
+      }
+    ],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "npm run build",
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": "npm run dev",
+    "scripts": {
+      "dev": "vite",
+      "build": "vite build",
+      "preview": "vite preview"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": "ES modules",
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "docs",
+      "public",
+      "src"
+    ],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "dist": {
+      "path": "dist",
+      "purpose": "Distribution/build output",
+      "fileCount": 1,
+      "lastAccessed": 1775889002090,
+      "keyFiles": [
+        "index.html"
+      ]
+    },
+    "docs": {
+      "path": "docs",
+      "purpose": "Documentation",
+      "fileCount": 5,
+      "lastAccessed": 1775889002111,
+      "keyFiles": [
+        "CLAUDE.md",
+        "Gemini01_[기획서] 탈출! 미치광이.md",
+        "Gemini02_[SB] 탈출! 미치광이.md",
+        "Gemini03_[전체 아트 에셋 리스트] 탈출! 미치광이.md",
+        "PROGRESS.md"
+      ]
+    },
+    "escape_mineral_lab": {
+      "path": "escape_mineral_lab",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1775889002112,
+      "keyFiles": []
+    },
+    "images": {
+      "path": "images",
+      "purpose": null,
+      "fileCount": 39,
+      "lastAccessed": 1775889002113,
+      "keyFiles": [
+        "biotite.png",
+        "calcite.png",
+        "character_base.png",
+        "character_gloves.png",
+        "character_labcoat.png"
+      ]
+    },
+    "public": {
+      "path": "public",
+      "purpose": "Public files",
+      "fileCount": 0,
+      "lastAccessed": 1775889002113,
+      "keyFiles": []
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 1,
+      "lastAccessed": 1775889002114,
+      "keyFiles": [
+        "main.js"
+      ]
+    },
+    "dist\\assets": {
+      "path": "dist\\assets",
+      "purpose": "Static assets",
+      "fileCount": 12,
+      "lastAccessed": 1775889002120,
+      "keyFiles": [
+        "BaseScene-D8J6x4zG.js",
+        "DoorScene-EJPifVtI.js",
+        "EquipmentScene-Cm9xVHR1.js"
+      ]
+    },
+    "src\\data": {
+      "path": "src\\data",
+      "purpose": "Data files",
+      "fileCount": 2,
+      "lastAccessed": 1775889002125,
+      "keyFiles": [
+        "audio-manifest.js",
+        "minerals.js"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "src\\scenes\\LabScene.js",
+      "accessCount": 34,
+      "lastAccessed": 1776297296402,
+      "type": "file"
+    },
+    {
+      "path": "src\\scenes\\EquipmentScene.js",
+      "accessCount": 30,
+      "lastAccessed": 1776296308585,
+      "type": "directory"
+    },
+    {
+      "path": "src\\systems\\MineralManager.js",
+      "accessCount": 13,
+      "lastAccessed": 1776306908050,
+      "type": "directory"
+    },
+    {
+      "path": "src\\ui\\UIManager.js",
+      "accessCount": 5,
+      "lastAccessed": 1775890292457,
+      "type": "file"
+    },
+    {
+      "path": "src\\scenes\\DoorScene.js",
+      "accessCount": 5,
+      "lastAccessed": 1775892719373,
+      "type": "file"
+    },
+    {
+      "path": "src\\systems\\AudioManager.js",
+      "accessCount": 2,
+      "lastAccessed": 1775890285264,
+      "type": "file"
+    },
+    {
+      "path": "src",
+      "accessCount": 2,
+      "lastAccessed": 1775892924264,
+      "type": "directory"
+    },
+    {
+      "path": "index.html",
+      "accessCount": 2,
+      "lastAccessed": 1775893782841,
+      "type": "file"
+    },
+    {
+      "path": "src\\core\\GameApp.js",
+      "accessCount": 2,
+      "lastAccessed": 1775893792380,
+      "type": "file"
+    },
+    {
+      "path": "src\\data\\audio-manifest.js",
+      "accessCount": 1,
+      "lastAccessed": 1775890059482,
+      "type": "file"
+    },
+    {
+      "path": "src\\core\\SceneManager.js",
+      "accessCount": 1,
+      "lastAccessed": 1775890143190,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 1,
+      "lastAccessed": 1775890207067,
+      "type": "directory"
+    },
+    {
+      "path": "src\\core\\BaseScene.js",
+      "accessCount": 1,
+      "lastAccessed": 1775890207190,
+      "type": "file"
+    },
+    {
+      "path": "",
+      "accessCount": 1,
+      "lastAccessed": 1776297729783,
+      "type": "directory"
+    },
+    {
+      "path": "src\\data\\minerals.js",
+      "accessCount": 1,
+      "lastAccessed": 1776297731902,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

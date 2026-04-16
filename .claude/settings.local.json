@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"C:/Users/USER/Documents/Project_AI/광물실험실/src/core\")",
+      "Bash(mkdir -p \"C:/Users/USER/Documents/Project_AI/광물실험실/src/data\")",
+      "Bash(curl -s http://localhost:5173)",
+      "Bash(npm run:*)",
+      "Bash(node -c src/ui/ExperimentPopup.js)",
+      "Bash(node -c src/scenes/LabScene.js)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(node -e \"const p = require\\(''./node_modules/pixi.js/package.json''\\); console.log\\(''pixi version:'', p.version\\);\")",
+      "Bash(gh api:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(node -e \"import\\('./src/scenes/LabScene.js'\\).then\\(\\(\\) => console.log\\('OK'\\)\\).catch\\(e => console.error\\(e.message\\)\\)\")",
+      "Bash(node -e \"import\\('./src/scenes/DoorScene.js'\\).then\\(\\(\\) => console.log\\('OK'\\)\\).catch\\(e => console.error\\(e.message\\)\\)\")",
+      "Bash(npx vite:*)",
+      "Bash(node --input-type=module)",
+      "Bash(node -e \"const p=require\\('path'\\),f=require\\('fs'\\),h=require\\('os'\\).homedir\\(\\),d=process.env.CLAUDE_CONFIG_DIR||p.join\\(h,'.claude'\\),b=p.join\\(d,'plugins','cache','omc','oh-my-claudecode'\\);try{const v=f.readdirSync\\(b\\).filter\\(x=>/^\\\\d/.test\\(x\\)\\).sort\\(\\(a,c\\)=>a.localeCompare\\(c,void 0,{numeric:true}\\)\\);console.log\\('Installed:',v.length?v[v.length-1]:'\\(none\\)'\\)}catch{console.log\\('Installed: \\(none\\)'\\)}\")",
+      "Bash(npm view:*)",
+      "Bash(node:*)",
+      "Bash(omc update:*)",
+      "Bash(npm install:*)"
+    ]
+  }
+}
