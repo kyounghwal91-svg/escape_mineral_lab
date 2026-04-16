@@ -178,6 +178,24 @@
       "accessCount": 1,
       "lastAccessed": 1776328493952,
       "type": "file"
+    },
+    {
+      "path": "vite.config.js",
+      "accessCount": 1,
+      "lastAccessed": 1776329485079,
+      "type": "file"
+    },
+    {
+      "path": "src\\core\\GameApp.js",
+      "accessCount": 1,
+      "lastAccessed": 1776329490126,
+      "type": "file"
+    },
+    {
+      "path": "src",
+      "accessCount": 1,
+      "lastAccessed": 1776329498593,
+      "type": "directory"
     }
   ],
   "userDirectives": []
