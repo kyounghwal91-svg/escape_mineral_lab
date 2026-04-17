@@ -60,7 +60,7 @@ export class UIManager {
     this.container.addChild(this._hpBarFill);
 
     // === 타이머 ===
-    this._timerText = new PIXI.Text('10:00', {
+    this._timerText = new PIXI.Text('05:00', {
       fontFamily: 'Arial', fontSize: 28, fill: 0xffffff, fontWeight: 'bold',
     });
     this._timerText.anchor.set(1, 0);
@@ -79,7 +79,7 @@ export class UIManager {
 
     this._dialogText = new PIXI.Text('', {
       fontFamily: 'Arial', fontSize: 18, fill: 0xffffff,
-      wordWrap: true, wordWrapWidth: 860,
+      wordWrap: true, wordWrapWidth: 860, lineHeight: 22,
     });
     this._dialogText.position.set(20, 15);
     this._dialogBox.addChild(this._dialogText);

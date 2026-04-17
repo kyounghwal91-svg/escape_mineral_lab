@@ -2,7 +2,7 @@ export class StatusManager {
   constructor() {
     this.hp = 100;
     this.maxHp = 100;
-    this.timer = 600;
+    this.timer = 300;
     this._interval = null;
     this._listeners = {};
   }
@@ -69,7 +69,7 @@ export class StatusManager {
   reset() {
     this.stopTimer();
     this.hp = 100;
-    this.timer = 600;
+    this.timer = 300;
     this._listeners = {};
   }
 }

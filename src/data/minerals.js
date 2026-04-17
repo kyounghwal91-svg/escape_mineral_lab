@@ -13,7 +13,7 @@ export const MINERALS = [
   {
     id: 'feldspar',
     name: '장석',
-    colorLabel: '흰색이나 분홍색',
+    colorLabel: '흰색이나\n분홍색',
     color: 0xffd6d6,
     streakColor: 'white',
     hardness: 'medium',

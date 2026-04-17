@@ -61,6 +61,9 @@ export default class DoorScene extends BaseScene {
     this._buildLogbookPanel(W, H);
     this._buildCluePanel(W, H);
 
+    // Restore slot state saved before navigating to Lab Scene
+    this._restoreSlotState();
+
     // Sync submit button with current mineralManager state
     this._updateSubmitButton();
 
@@ -170,6 +173,21 @@ export default class DoorScene extends BaseScene {
       lbl.position.set(sx, labelY);
       this.container.addChild(lbl);
     }
+  }
+
+  _restoreSlotState() {
+    const saved = this.mineralManager.doorSlotState;
+    if (!saved || saved.every(id => id === null)) return;
+    saved.forEach((mineralId, i) => {
+      if (!mineralId) return;
+      const slot = this._slots[i];
+      const card = this._cards.find(c => c.id === mineralId);
+      if (!slot || !card) return;
+      slot.mineral = card.mineral;
+      slot.card = card;
+      this._drawSlot(slot, card.mineral);
+      card.container.visible = false;
+    });
   }
 
   _drawSlot(slot, mineral) {
@@ -364,7 +382,7 @@ export default class DoorScene extends BaseScene {
   _buildSubmitButton(W, H) {
     const btnW = 230, btnH = 44;
     const btnX = W / 2 - btnW / 2;
-    const btnY = DOOR_CENTER_Y + 185;   // ≈ Y:500
+    const btnY = DOOR_CENTER_Y + 175;   // ≈ Y:490
 
     // Dark backdrop panel — makes the submit area readable over the door image
     const padX = 26, padTop = 32, padBot = 10;
@@ -414,7 +432,7 @@ export default class DoorScene extends BaseScene {
 
     // Helper note — below the panel, small and dimmed
     const helper = new PIXI.Text('슬롯을 클릭하면 광물을 제거할 수 있습니다', {
-      fontFamily: 'Arial', fontSize: 10, fill: 0x3d5a78, letterSpacing: 1,
+      fontFamily: 'Arial', fontSize: 12, fill: 0xffffff, letterSpacing: 1,
     });
     helper.anchor.set(0.5, 0);
     helper.position.set(W / 2, panelY + panelH + 4);
@@ -483,10 +501,18 @@ export default class DoorScene extends BaseScene {
       this._slots.forEach(s => this._shakeSlot(s));
 
       if (attemptsLeft <= 0) {
-        this._showNotePopup(
-          '조합이 틀렸습니다.\n\n모든 시도 횟수를 소진했습니다.\n실험실로 돌아가 단서를 다시 확인해보세요.',
-          '탈출 실패'
-        );
+        const pop = new NotePopup(this.sceneManager.app, '조합이 틀렸습니다.\n\n모든 시도 횟수를 소진했습니다.\n게임을 종료합니다.', '탈출 실패');
+        pop.onClose(() => {
+          this._popup = null;
+          this.statusManager.stopTimer();
+          this.sceneManager.changeScene('result', {
+            condition: 'failure',
+            statusManager: this.statusManager,
+            mineralManager: this.mineralManager,
+          });
+        });
+        this._popup = pop;
+        this.container.addChild(pop.container);
       } else {
         this._showNotePopup(
           `조합이 틀렸습니다.\n\n남은 시도: ${attemptsLeft}회\n\n실험 도감을 다시 확인하고 단서와 비교해보세요.`,
@@ -670,6 +696,8 @@ export default class DoorScene extends BaseScene {
     btn.eventMode = 'static';
     btn.cursor = 'pointer';
     btn.on('pointerdown', () => {
+      // Save slot state so it can be restored when returning
+      this.mineralManager.doorSlotState = this._slots.map(s => s.mineral?.id ?? null);
       this.statusManager?.resumeTimer?.();
       this.sceneManager.changeScene('lab', {
         statusManager: this.statusManager,
@@ -683,7 +711,7 @@ export default class DoorScene extends BaseScene {
   // ─── Logbook panel (experiment record, kept from original) ────────────────
 
   _buildLogbookPanel(W, H) {
-    const PX = 20, PY = 86, PW = 340, PH = 408;
+    const PX = 20, PY = 86, PW = 340, PH = 450;
     const panel = new PIXI.Container();
     panel.position.set(PX, PY);
 
@@ -722,7 +750,7 @@ export default class DoorScene extends BaseScene {
       { key: 'hardness', w: 48, label: '긁힘' },
     ];
     const NO_HARDNESS = ['feldspar', 'biotite', 'magnetite'];
-    const ROW_H = 62, HDR_H = 28, TX = 10, TY = 58;
+    const ROW_H = 70, HDR_H = 28, TX = 10, TY = 58;
     const tableW = COLS.reduce((s, c) => s + c.w, 0);
 
     const headerRow = new PIXI.Graphics();
@@ -777,14 +805,14 @@ export default class DoorScene extends BaseScene {
       sprite.anchor.set(0.5);
       sprite.width = 24;
       sprite.height = 24;
-      sprite.position.set(TX + 16, rowY + 28);
+      sprite.position.set(TX + 16, rowY + 32);
       panel.addChild(sprite);
 
       const nmTxt = new PIXI.Text(mineral.name, {
         fontFamily: 'Arial', fontSize: 13, fill: 0xddeeff, fontWeight: 'bold',
       });
       nmTxt.anchor.set(0, 0.5);
-      nmTxt.position.set(TX + 32, rowY + 22);
+      nmTxt.position.set(TX + 32, rowY + 26);
       panel.addChild(nmTxt);
 
       const rec = records[mineral.id] || {};
@@ -796,7 +824,7 @@ export default class DoorScene extends BaseScene {
           fontWeight: text !== '?' ? 'bold' : 'normal',
         });
         cell.anchor.set(0.5, 0.5);
-        cell.position.set(cx + col.w / 2, rowY + 28);
+        cell.position.set(cx + col.w / 2, rowY + 32);
         panel.addChild(cell);
         cx += col.w;
       });

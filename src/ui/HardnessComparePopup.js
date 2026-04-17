@@ -212,10 +212,11 @@ export class HardnessComparePopup {
     quartzLabel.position.set(this._quartzHome.x, this._quartzHome.y + 64);
     this.container.addChild(quartzLabel);
 
-    const scratchMask = new PIXI.Graphics();
-    scratchMask.beginFill(0xffffff);
-    scratchMask.drawCircle(targetX, mineralY, this._scratchRadius);
-    scratchMask.endFill();
+    const scratchMask = PIXI.Sprite.from(`images/${this.calcite.id}.png`);
+    scratchMask.anchor.set(0.5);
+    scratchMask.width = calciteSize;
+    scratchMask.height = calciteSize;
+    scratchMask.position.set(targetX, mineralY);
     this.container.addChild(scratchMask);
 
     this._scratchContainer = new PIXI.Container();

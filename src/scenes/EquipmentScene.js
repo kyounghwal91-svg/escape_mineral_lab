@@ -772,7 +772,7 @@ export default class EquipmentScene extends BaseScene {
         this.sceneManager.app.ticker.remove(fadeIn);
         this._monitorFadeInTicker = null;
         this.uiManager.showDialogue(
-          '흐흐흐... 10분 안에 열쇠 광물 3개를 찾아 문에 끼워넣지 못하면 넌 내 영원한 실험체가 될 것이다!'
+          '흐흐흐... 깨어났군. 넌 내 실험실에 갇혔다.\n5분 안에 열쇠 광물 3개를 찾아 문에 끼워넣지 못하면 넌 영원히 내 실험체가 되는 거야!!'
         );
 
         // onComplete 안이 아닌 즉시 등록 — 타이핑 중 클릭해도 모니터가 반드시 닫힘

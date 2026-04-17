@@ -75,6 +75,7 @@ export class MineralManager {
     this.maxSubmitAttempts = 3;
     this.hintPanelLevels = [1, 0, 0];
     this.hintPanelProgress = 1;
+    this.doorSlotState = [null, null, null]; // mineral ids saved across Lab↔Door navigation
   }
 
   init() {

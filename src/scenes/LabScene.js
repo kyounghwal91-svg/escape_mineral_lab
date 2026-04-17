@@ -9,16 +9,15 @@ import { UIManager } from '../ui/UIManager.js';
 import { SafetySystem } from '../systems/SafetySystem.js';
 import { ExperimentPopup } from '../ui/ExperimentPopup.js';
 import { HardnessComparePopup } from '../ui/HardnessComparePopup.js';
-import { NotePopup } from '../ui/NotePopup.js';
 
 const TABLE_LAYOUT = {
-  streak: { x: 360, y: 300 },
+  streak: { x: 410, y: 320 },
   acid: { x: 560, y: 300 },
   magnet: { x: 760, y: 336 },
 };
 
 const MINERAL_POSITIONS = [
-  { cx: 260, cy: 438 },  // quartz  (?앹쁺 ???쇰꺼 ?섎떒 湲곗?)
+  { cx: 260, cy: 458 },  // quartz  (?앹쁺 ???쇰꺼 ?섎떒 湲곗?)
   { cx: 397, cy: 481 },  // feldspar
   { cx: 554, cy: 481 },  // biotite
   { cx: 711, cy: 481 },  // calcite
@@ -38,12 +37,10 @@ export default class LabScene extends BaseScene {
 
     this._minerals = [];
     this._tools = [];
-    this._note = null;
     this._dragging = null;
     this._stageMove = null;
     this._stageUp = null;
     this._popup = null;
-    this._noteClicked = false;
     this._logbookCells = {};
     this._gameOverHandler = null;
     this._timerExpiredHandler = null;
@@ -73,18 +70,18 @@ export default class LabScene extends BaseScene {
       'images/Hcl_bottle_spoide.png',
       'images/petri_dish.png',
       'images/paper_clip.png',
-      'images/lab_note.png',
       'images/exit_door.png'
     ]);
 
     this.statusManager = data.statusManager ?? new StatusManager();
     this.mineralManager = data.mineralManager ?? new MineralManager();
     if (!data.mineralManager) this.mineralManager.init();
+    this.mineralManager.getAllMinerals().forEach(m => this.mineralManager.revealColor(m.id));
     this.safetySystem = data.safetySystem ?? new SafetySystem();
 
     this.uiManager = new UIManager(this.sceneManager.app, this.statusManager);
     this.uiManager.init();
-    this.uiManager.moveMuteBtn(0, -80);
+    this.uiManager.moveMuteBtn(0, 21); // center in bottom bar (H-54 → H-33)
 
     this._buildBackground(W, H);
     this._buildClueHints(W, H);
@@ -92,8 +89,6 @@ export default class LabScene extends BaseScene {
     this._buildLogbookPanel(W, H);
     this._buildDoorButton(W, H);
     this._buildEquipmentButton(W, H);
-    this._buildNote(W, H);
-
     const placed = this._buildMinerals(W, H);
     this._buildTools(W, H, placed);
     this.refresh();
@@ -102,7 +97,7 @@ export default class LabScene extends BaseScene {
     if (this.mineralManager.shouldShowLabIntroDialogue()) {
       this.sceneManager.app.ticker.addOnce(() => {
         this.uiManager.showDialogue(
-          '여기가… 실험실인가.\n문이 잠겨 있고… 저 철문이 출구인 것 같아.\n저걸 열려면 \'열쇠 광물\'을 찾아야 한다고 했지…\n실험대 위에 있는 광물과 도구들을 살펴봐야겠다.',
+          '여기가… 실험실인가. 문이 잠겨 있고… 저 철문이 출구인 것 같아.\n저걸 열려면 \'열쇠 광물\'을 찾아야 한다고 했지… 실험대 위에 있는 광물과 도구들을 살펴봐야겠다.',
           () => this._pulseHighlight()
         );
       });
@@ -275,7 +270,7 @@ export default class LabScene extends BaseScene {
   }
 
   _buildLogbookPanel(W, H) {
-    const PX = 940, PY = 86, PW = 340, PH = 408;
+    const PX = 940, PY = 196, PW = 340, PH = 408;
     const panel = new PIXI.Container();
     panel.position.set(PX, PY);
     panel.zIndex = 10;
@@ -464,18 +459,6 @@ export default class LabScene extends BaseScene {
     this.container.addChild(btn);
   }
 
-  _buildNote(W, H) {
-    const cont = new PIXI.Container();
-    cont.position.set(500, 380);
-    cont.zIndex = 10;
-    const sprite = PIXI.Sprite.from('images/lab_note.png');
-    sprite.anchor.set(0.5); sprite.width = 70 * LAB_OBJECT_SCALE; sprite.scale.y = sprite.scale.x;
-    cont.addChild(sprite);
-    cont.eventMode = 'static'; cont.cursor = 'pointer';
-    cont.on('pointerdown', () => this._showNote());
-    this.container.addChild(cont);
-  }
-
   _buildMinerals(W, H) {
     const placed = [];
     MINERALS.forEach((mineral, i) => {
@@ -550,12 +533,12 @@ export default class LabScene extends BaseScene {
 
       const label = new PIXI.Text(
         td.type === 'streak' ? '조흔판' :
-          td.type === 'acid' ? '염산' :
+          td.type === 'acid' ? '묽은 염산' :
             td.type === 'magnet' ? '클립' : '경도 비교',
-        { fontFamily: 'Arial', fontSize: 11, fill: 0xffffff, fontWeight: 'bold', dropShadow: true, dropShadowColor: 0x000000, dropShadowDistance: 1 }
+        { fontFamily: 'Arial', fontSize: 13, fill: 0xffffff, fontWeight: 'bold', dropShadow: true, dropShadowColor: 0x000000, dropShadowDistance: 1 }
       );
       label.anchor.set(0.5, 0);
-      label.position.set(0, (td.type === 'magnet' ? 30 : 46) * LAB_OBJECT_SCALE);
+      label.position.set(0, td.type === 'streak' ? 46 * LAB_OBJECT_SCALE - 8 : td.type === 'acid' ? 46 * LAB_OBJECT_SCALE + 3 : (td.type === 'magnet' ? 30 : 46) * LAB_OBJECT_SCALE);
       cont.addChild(label);
 
       const toolGlow = PIXI.Sprite.from(`images/${td.img}`);
@@ -763,28 +746,6 @@ export default class LabScene extends BaseScene {
       }
     });
     this._mountPopup(popup);
-  }
-
-  _showNote() {
-    if (this._popup) return;
-    AudioManager.instance.playSFX('popup_open');
-    // Show the first unlocked clue from experiment progress, or a starter prompt.
-    const clues = this.mineralManager.unlockedClues;
-    let text;
-    if (clues.length > 0) {
-      text = {
-        clue: `"${clues[0].text}"`,
-        footer: '힌트 버튼에서 발견한 모든 단서를 확인할 수 있습니다.',
-      };
-    } else {
-      text = {
-        clue: '"광물을 실험 도구에 드래그해서 실험을 진행해 보세요."',
-        footer: '실험을 충분히 진행하면 열쇠 광물에 대한 단서가 나타납니다.',
-      };
-    }
-    const pop = new NotePopup(this.sceneManager.app, text, '실험실 쪽지');
-    pop.onClose(() => { AudioManager.instance.playSFX('popup_close'); this._popup = null; });
-    this._mountPopup(pop);
   }
 
   _tryDoor() {
