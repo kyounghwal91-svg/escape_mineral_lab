@@ -141,8 +141,8 @@
     },
     {
       "path": "src\\scenes\\DoorScene.js",
-      "accessCount": 10,
-      "lastAccessed": 1776432847621,
+      "accessCount": 12,
+      "lastAccessed": 1776434325905,
       "type": "directory"
     },
     {
@@ -150,6 +150,12 @@
       "accessCount": 4,
       "lastAccessed": 1776431568207,
       "type": "file"
+    },
+    {
+      "path": "src",
+      "accessCount": 4,
+      "lastAccessed": 1776434129546,
+      "type": "directory"
     },
     {
       "path": "src\\ui\\UIManager.js",
@@ -164,10 +170,16 @@
       "type": "file"
     },
     {
-      "path": "src",
+      "path": "src\\scenes\\ResultScene.js",
       "accessCount": 3,
-      "lastAccessed": 1776432283093,
-      "type": "directory"
+      "lastAccessed": 1776434343621,
+      "type": "file"
+    },
+    {
+      "path": "progress.md",
+      "accessCount": 3,
+      "lastAccessed": 1776434519955,
+      "type": "file"
     },
     {
       "path": "src\\data\\minerals.js",
@@ -180,12 +192,6 @@
       "accessCount": 2,
       "lastAccessed": 1776432317897,
       "type": "directory"
-    },
-    {
-      "path": "progress.md",
-      "accessCount": 2,
-      "lastAccessed": 1776433949626,
-      "type": "file"
     },
     {
       "path": "",

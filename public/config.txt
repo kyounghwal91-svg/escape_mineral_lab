@@ -10,8 +10,8 @@ testMode = false
 
 # 시작 씬 선택
 # 선택지: intro | equipment | lab | result | door
-startScene = door
+startScene = intro
 
 # 엔딩 직행 (startScene = result 일 때만 적용됩니다)
 # 선택지: perfect | barely | failure
-ending = perfect
+ending = failure

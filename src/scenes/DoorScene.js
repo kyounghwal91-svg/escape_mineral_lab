@@ -507,6 +507,7 @@ export default class DoorScene extends BaseScene {
           this.statusManager.stopTimer();
           this.sceneManager.changeScene('result', {
             condition: 'failure',
+            failureReason: 'attempts',
             statusManager: this.statusManager,
             mineralManager: this.mineralManager,
           });

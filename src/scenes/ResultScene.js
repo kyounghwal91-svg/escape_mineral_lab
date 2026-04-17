@@ -18,6 +18,7 @@ export default class ResultScene extends BaseScene {
     this._allowDelayedResultBGM = true;
 
     const condition = data.condition ?? 'failure';
+    const failureReason = data.failureReason ?? null;
     const statusManager = data.statusManager ?? null;
     const hp = statusManager ? statusManager.hp : 0;
     const timeStr = statusManager ? statusManager.getTimeFormatted() : '00:00';
@@ -51,15 +52,17 @@ export default class ResultScene extends BaseScene {
     } else if (condition === 'barely') {
       titleText  = '겨우 탈출...';
       titleColor = 0x85c1e9;
-      subText    = '가까스로 탈출에 성공했지만 부상을 입었습니다.';
+      subText    = '가까스로 탈출에 성공했지만 부상을 입었습니다.\n완벽한 성공을 시도해 볼까요?';
       subColor   = 0xaed6f1;
       btnColor   = 0x2e86c1;
     } else {
       titleText  = '실험 실패...';
       titleColor = 0xe74c3c;
-      subText    = hp === 0
-        ? 'HP가 모두 소진되어 실험을 계속할 수 없습니다.'
-        : '10분의 시간이 모두 지나버렸습니다.';
+      subText    = failureReason === 'attempts'
+        ? '열쇠 광물을 찾지 못했습니다.'
+        : hp === 0
+          ? 'HP가 모두 소진되어 실험을 계속할 수 없습니다.'
+          : '5분의 시간이 모두 지나버렸습니다.';
       subColor   = 0xffffff;
       btnColor   = 0x922b21;
     }
