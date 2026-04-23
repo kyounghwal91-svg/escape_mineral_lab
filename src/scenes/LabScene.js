@@ -11,17 +11,17 @@ import { ExperimentPopup } from '../ui/ExperimentPopup.js';
 import { HardnessComparePopup } from '../ui/HardnessComparePopup.js';
 
 const TABLE_LAYOUT = {
-  streak: { x: 410, y: 320 },
-  acid: { x: 560, y: 300 },
-  magnet: { x: 760, y: 336 },
+  streak: { x: 500, y: 320 },
+  acid: { x: 650, y: 300 },
+  magnet: { x: 850, y: 336 },
 };
 
 const MINERAL_POSITIONS = [
-  { cx: 260, cy: 458 },  // quartz  (?앹쁺 ???쇰꺼 ?섎떒 湲곗?)
-  { cx: 397, cy: 481 },  // feldspar
-  { cx: 554, cy: 481 },  // biotite
-  { cx: 711, cy: 481 },  // calcite
-  { cx: 868, cy: 481 },  // magnetite (x 湲곗〈 ?좎?)
+  { cx: 350, cy: 458 },  // quartz  (?앹쁺 ???쇰꺼 ?섎떒 湲곗?)
+  { cx: 487, cy: 481 },  // feldspar
+  { cx: 644, cy: 481 },  // biotite
+  { cx: 801, cy: 481 },  // calcite
+  { cx: 958, cy: 481 },  // magnetite (x 湲곗〈 ?좎?)
 ];
 
 const LAB_OBJECT_SCALE = 1.3;
@@ -259,86 +259,157 @@ export default class LabScene extends BaseScene {
   }
 
   _buildLabTable(W, H) {
-    const hint = new PIXI.Text('광물을 도구에 드래그하여 실험을 시작하세요', {
+    const hint = new PIXI.Text('광물을 도구에 드래그하여 실험을 해 보세요.', {
       fontFamily: 'Arial', fontSize: 17, fill: 0xcfe8f6, fontWeight: 'bold',
       dropShadow: true, dropShadowColor: 0x000000, dropShadowDistance: 1
     });
     hint.anchor.set(0.5, 0);
-    hint.position.set(W / 2, 570);
+    hint.position.set(W / 2, 572);
     hint.zIndex = 5;
     this.container.addChild(hint);
   }
 
   _buildLogbookPanel(W, H) {
-    const PX = 940, PY = 196, PW = 340, PH = 408;
-    const panel = new PIXI.Container();
-    panel.position.set(PX, PY);
-    panel.zIndex = 10;
+    this._buildLogbookToggle(W, H);
+    this._buildLogbookOverlay(W, H);
+  }
+
+  _buildLogbookToggle(W, H) {
+    const btn = new PIXI.Container();
+    btn.position.set(W - 162, 308);
+    btn.zIndex = 15;
 
     const bg = new PIXI.Graphics();
-    bg.beginFill(0x08111a, 0.95); bg.lineStyle(1, 0x315f82, 0.9);
-    bg.drawRoundedRect(0, 0, PW, PH, 16); bg.endFill();
-    panel.addChild(bg);
+    bg.beginFill(0x0d1b2a, 0.95);
+    bg.lineStyle(1.5, 0x315f82, 0.9);
+    bg.drawRoundedRect(0, 0, 150, 84, 8);
+    bg.endFill();
+    btn.addChild(bg);
+
+    const txt = new PIXI.Text('📋 실험 도감  ▶', {
+      fontFamily: 'Arial', fontSize: 13, fill: 0x9dd8ff, fontWeight: 'bold',
+    });
+    txt.anchor.set(0.5, 0.5);
+    txt.position.set(75, 42);
+    btn.addChild(txt);
+
+    btn.eventMode = 'static';
+    btn.cursor = 'pointer';
+    btn.on('pointerover', () => { bg.tint = 0x1a3a5c; });
+    btn.on('pointerout',  () => { bg.tint = 0xffffff; });
+    btn.on('pointerdown', () => this._toggleLogbook());
+
+    this._logbookToggleBg = bg;
+    this._logbookToggleTxt = txt;
+    this.container.addChild(btn);
+  }
+
+  _buildLogbookOverlay(W, H) {
+    const PW = 680, PH = 600;
+    const PX = Math.round((W - PW) / 2);
+    const PY = Math.round((H - PH) / 2);
+
+    const overlay = new PIXI.Container();
+    overlay.zIndex = 500;
+    overlay.visible = false;
+
+    const backdrop = new PIXI.Graphics();
+    backdrop.beginFill(0x000000, 0.6);
+    backdrop.drawRect(0, 0, W, H);
+    backdrop.endFill();
+    backdrop.eventMode = 'static';
+    backdrop.on('pointerdown', () => this._closeLogbook());
+    overlay.addChild(backdrop);
+
+    const box = new PIXI.Graphics();
+    box.beginFill(0x08111a, 0.97);
+    box.lineStyle(1.5, 0x315f82, 0.9);
+    box.drawRoundedRect(0, 0, PW, PH, 16);
+    box.endFill();
+    box.position.set(PX, PY);
+    box.eventMode = 'static';
+    overlay.addChild(box);
 
     const headerBg = new PIXI.Graphics();
-    headerBg.beginFill(0x0d1b2a, 0.95);
-    headerBg.drawRoundedRect(0, 0, PW, 48, 16);
-    headerBg.drawRect(0, 24, PW, 24);
+    headerBg.beginFill(0x0d1b2a, 0.97);
+    headerBg.drawRoundedRect(0, 0, PW, 56, 16);
+    headerBg.drawRect(0, 28, PW, 28);
     headerBg.endFill();
-    panel.addChild(headerBg);
+    headerBg.position.set(PX, PY);
+    overlay.addChild(headerBg);
 
-    const hdrTxt = new PIXI.Text('실험 도감', { fontFamily: 'Arial', fontSize: 16, fill: 0x9dd8ff, fontWeight: 'bold' });
-    hdrTxt.position.set(16, 12);
-    panel.addChild(hdrTxt);
+    const hdrTxt = new PIXI.Text('실험 도감', {
+      fontFamily: 'Arial', fontSize: 20, fill: 0x9dd8ff, fontWeight: 'bold',
+    });
+    hdrTxt.position.set(PX + 20, PY + 14);
+    overlay.addChild(hdrTxt);
 
     const hdrSub = new PIXI.Text('진행한 실험 결과가 자동 기록됩니다', {
-      fontFamily: 'Arial', fontSize: 12, fill: 0x5d88a9,
+      fontFamily: 'Arial', fontSize: 13, fill: 0x5d88a9,
     });
-    hdrSub.position.set(16, 30);
-    panel.addChild(hdrSub);
+    hdrSub.position.set(PX + 20, PY + 36);
+    overlay.addChild(hdrSub);
+
+    const closeBg = new PIXI.Graphics();
+    closeBg.beginFill(0x3d4f60);
+    closeBg.drawCircle(0, 0, 15);
+    closeBg.endFill();
+    const closeX = new PIXI.Text('✕', { fontFamily: 'Arial', fontSize: 13, fill: 0xffffff });
+    closeX.anchor.set(0.5, 0.5);
+    const closeBtn = new PIXI.Container();
+    closeBtn.addChild(closeBg);
+    closeBtn.addChild(closeX);
+    closeBtn.position.set(PX + PW - 26, PY + 28);
+    closeBtn.eventMode = 'static';
+    closeBtn.cursor = 'pointer';
+    closeBtn.on('pointerover', () => { closeBg.tint = 0xe74c3c; });
+    closeBtn.on('pointerout',  () => { closeBg.tint = 0xffffff; });
+    closeBtn.on('pointerdown', () => this._closeLogbook());
+    overlay.addChild(closeBtn);
 
     const COLS = [
-      { key: 'name',     w: 80, label: '광물' },
-      { key: 'color',    w: 46, label: '색' },
-      { key: 'streak',   w: 48, label: '조흔' },
-      { key: 'acid',     w: 54, label: '염산' },
-      { key: 'magnet',   w: 44, label: '자성' },
-      { key: 'hardness', w: 48, label: '긁힘' },
+      { key: 'name',     w: 140, label: '광물' },
+      { key: 'color',    w: 80,  label: '색' },
+      { key: 'streak',   w: 100, label: '조흔색' },
+      { key: 'acid',     w: 100, label: '염산' },
+      { key: 'magnet',   w: 90,  label: '자성' },
+      { key: 'hardness', w: 130, label: '긁힘' },
     ];
     const NO_HARDNESS = ['feldspar', 'biotite', 'magnetite'];
-    const ROW_H = 62;
-    const HDR_H = 28;
-    const TX = 10;
-    const TY = 58;
+    const ROW_H = 80;
+    const HDR_H = 34;
+    const TX = PX + 10;
+    const TY = PY + 66;
     const tableW = COLS.reduce((sum, col) => sum + col.w, 0);
 
     const headerRow = new PIXI.Graphics();
     headerRow.beginFill(0x0f2234, 0.95);
     headerRow.drawRoundedRect(TX, TY, tableW, HDR_H, 10);
     headerRow.endFill();
-    panel.addChild(headerRow);
+    overlay.addChild(headerRow);
 
     let colX = TX;
     COLS.forEach((col) => {
       const colTxt = new PIXI.Text(col.label, {
-        fontFamily: 'Arial', fontSize: 12, fill: 0x78b8de, fontWeight: 'bold',
+        fontFamily: 'Arial', fontSize: 14, fill: 0x78b8de, fontWeight: 'bold',
       });
       colTxt.anchor.set(0.5, 0.5);
       colTxt.position.set(colX + col.w / 2, TY + HDR_H / 2);
-      panel.addChild(colTxt);
+      overlay.addChild(colTxt);
       colX += col.w;
     });
 
-    const records = this.mineralManager.getAllRecords();
     const fmtMap = {
       color: (r, mid) => {
         if (!this.mineralManager.isColorRevealed(mid)) return { text: '?', color: 0x2e4057 };
         const m = this.mineralManager.getMineral(mid);
         return { text: m?.colorLabel ?? '?', color: 0x9dd8ff };
       },
-      streak: (r) => r.streakTested
-        ? { text: ({ none: '없음', white: '흰색', black: '검정' })[r.streakColor] || r.streakColor, color: 0x73e2a7 }
-        : { text: '?', color: 0x2e4057 },
+      streak: (r, mid) => {
+        if (mid === 'quartz') return { text: '해당 없음', color: 0x4a6580 };
+        if (!r.streakTested) return { text: '?', color: 0x2e4057 };
+        return { text: ({ none: '없음', white: '흰색', black: '검정' })[r.streakColor] || r.streakColor, color: 0x73e2a7 };
+      },
       acid: (r) => r.acidTested
         ? { text: r.acidReacted ? '거품✓' : '무반응', color: r.acidReacted ? 0xf3b562 : 0x90a4b8 }
         : { text: '?', color: 0x2e4057 },
@@ -346,50 +417,74 @@ export default class LabScene extends BaseScene {
         ? { text: r.magnetic ? '있음✓' : '없음', color: r.magnetic ? 0xc792ea : 0x90a4b8 }
         : { text: '?', color: 0x2e4057 },
       hardness: (r, mid) => {
-        if (NO_HARDNESS.includes(mid)) return { text: '해당없음', color: 0x4a6580 };
+        if (NO_HARDNESS.includes(mid)) return { text: '해당 없음', color: 0x4a6580 };
         if (!r.hardnessTested) return { text: '?', color: 0x2e4057 };
         return { text: r.hardness === 'high' ? '없음' : '있음', color: 0x55d6c2 };
       },
     };
 
+    const records = this.mineralManager.getAllRecords();
     MINERALS.forEach((mineral, ri) => {
-      const rowY = TY + HDR_H + 8 + ri * ROW_H;
+      const rowY = TY + HDR_H + 6 + ri * ROW_H;
       const rowCenterY = rowY + (ROW_H - 6) / 2;
+
       const rowBg = new PIXI.Graphics();
       rowBg.beginFill(ri % 2 === 0 ? 0x102231 : 0x0c1b28, 0.92);
       rowBg.drawRoundedRect(TX, rowY, tableW, ROW_H - 6, 12);
       rowBg.endFill();
-      panel.addChild(rowBg);
+      overlay.addChild(rowBg);
 
       const sprite = PIXI.Sprite.from(`images/${mineral.id}.png`);
-      sprite.anchor.set(0.5); sprite.width = 24; sprite.height = 24;
-      sprite.position.set(TX + 16, rowCenterY);
-      panel.addChild(sprite);
+      sprite.anchor.set(0.5);
+      sprite.width = 38; sprite.height = 38;
+      sprite.position.set(TX + 22, rowCenterY);
+      overlay.addChild(sprite);
 
       const nmTxt = new PIXI.Text(mineral.name, {
-        fontFamily: 'Arial', fontSize: 13, fill: 0xddeeff, fontWeight: 'bold',
+        fontFamily: 'Arial', fontSize: 16, fill: 0xddeeff, fontWeight: 'bold',
       });
       nmTxt.anchor.set(0, 0.5);
-      nmTxt.position.set(TX + 32, rowCenterY);
-      panel.addChild(nmTxt);
+      nmTxt.position.set(TX + 46, rowCenterY);
+      overlay.addChild(nmTxt);
 
       const rec = records[mineral.id] || {};
       let cx = TX + COLS[0].w;
       COLS.slice(1).forEach((col) => {
         const { text, color } = fmtMap[col.key](rec, mineral.id);
         const cell = new PIXI.Text(text, {
-          fontFamily: 'Arial', fontSize: 12, fill: color,
+          fontFamily: 'Arial', fontSize: 14, fill: color,
           fontWeight: text !== '?' ? 'bold' : 'normal',
         });
         cell.anchor.set(0.5, 0.5);
         cell.position.set(cx + col.w / 2, rowCenterY);
-        panel.addChild(cell);
+        overlay.addChild(cell);
         this._logbookCells[`${mineral.id}_${col.key}`] = cell;
         cx += col.w;
       });
     });
 
-    this.container.addChild(panel);
+    this._logbookOverlay = overlay;
+    this.container.addChild(overlay);
+  }
+
+  _toggleLogbook() {
+    if (this._logbookOverlay?.visible) {
+      this._closeLogbook();
+    } else {
+      this._openLogbook();
+    }
+  }
+
+  _openLogbook() {
+    this.refresh();
+    this._logbookOverlay.visible = true;
+    this.container.sortChildren();
+    if (this._logbookToggleTxt) this._logbookToggleTxt.text = '📋 실험 도감  ◀';
+  }
+
+  _closeLogbook() {
+    this._logbookOverlay.visible = false;
+    if (this._logbookToggleTxt) this._logbookToggleTxt.text = '📋 실험 도감  ▶';
   }
 
   _buildDoorButton(W, H) {
@@ -770,9 +865,11 @@ export default class LabScene extends BaseScene {
         const mineral = this.mineralManager.getMineral(mid);
         return { text: mineral?.colorLabel ?? '?', color: 0x9dd8ff };
       },
-      streak: (r) => r.streakTested
-        ? { text: (({ none: '없음', white: '흰색', black: '검정' })[r.streakColor] || r.streakColor), color: 0x73e2a7 }
-        : { text: '?', color: 0x2e4057 },
+      streak: (r, mid) => {
+        if (mid === 'quartz') return { text: '해당 없음', color: 0x4a6580 };
+        if (!r.streakTested) return { text: '?', color: 0x2e4057 };
+        return { text: (({ none: '없음', white: '흰색', black: '검정' })[r.streakColor] || r.streakColor), color: 0x73e2a7 };
+      },
       acid: (r) => r.acidTested
         ? { text: (r.acidReacted ? '거품 발생' : '무반응'), color: r.acidReacted ? 0xf3b562 : 0x90a4b8 }
         : { text: '?', color: 0x2e4057 },
@@ -780,7 +877,7 @@ export default class LabScene extends BaseScene {
         ? { text: (r.magnetic ? '있음' : '없음'), color: r.magnetic ? 0xc792ea : 0x90a4b8 }
         : { text: '?', color: 0x2e4057 },
       hardness: (r, mid) => {
-        if (NO_HARDNESS.includes(mid)) return { text: '해당없음', color: 0x4a6580 };
+        if (NO_HARDNESS.includes(mid)) return { text: '해당 없음', color: 0x4a6580 };
         if (!r.hardnessTested) return { text: '?', color: 0x2e4057 };
         return { text: r.hardness === 'high' ? '없음' : '있음', color: 0x55d6c2 };
       },

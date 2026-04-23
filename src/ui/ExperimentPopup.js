@@ -48,7 +48,7 @@ export class ExperimentPopup {
     this.container.addChild(box);
 
     const innerPanel = new PIXI.Graphics();
-    innerPanel.beginFill(0xfde8cc, 1);
+    innerPanel.beginFill(0xd6eaf8, 1);
     innerPanel.drawRoundedRect(0, 0, POP_W - 44, POP_H - 108, 18);
     innerPanel.endFill();
     innerPanel.position.set(px + 22, py + 74);
@@ -72,7 +72,7 @@ export class ExperimentPopup {
     this.container.addChild(accentLine);
 
     // 도구 이름 맵
-    const toolNames = { streak: '조흔판', acid: '스포이드·샬레(염산)', magnet: '클립(자성)' };
+    const toolNames = { streak: '조흔판', acid: '묽은 염산', magnet: '클립' };
 
     // 광물 아이콘 추가
     const mineralIcon = PIXI.Sprite.from(`images/${this.mineral.id}.png`);
@@ -118,36 +118,25 @@ export class ExperimentPopup {
       fontFamily: 'Arial', fontSize: 20, fill: 0x8ea5b8, fontWeight: 'bold', align: 'center',
     });
     instr.anchor.set(0.5, 0);
-    instr.position.set(midX, py + 96);
+    instr.position.set(midX, py + 88);
     this.container.addChild(instr);
 
-    const desc = new PIXI.Text(this.mineral.description ?? '', {
-      fontFamily: 'Arial', fontSize: 16, fill: 0x587086,
-      wordWrap: true, wordWrapWidth: POP_W - 120, align: 'center',
-    });
-    desc.anchor.set(0.5, 0);
-    desc.position.set(midX, py + 121);
-    this.container.addChild(desc);
-
-    // 효과 위젯 배치
+    // 효과 위젯 배치 (instr 아래 14px 여백, py+82+28+14 = py+124)
     const EW = 500;
-    const ex = px + (POP_W - EW) / 2;
-    const ey = py + 158;
+    const EFFECT_SCALE = (POP_W - 72) / EW; // 결과 박스와 동일 너비
+    const ex = px + 36; // 결과 박스 left와 동일
+    const ey = py + 124;
     this._buildEffect(ex, ey);
+    if (this._effect) this._effect.container.scale.set(EFFECT_SCALE);
 
+    // effect bottom ≈ py+124+392 = py+516, gap 20px → result at py+536
     const resultPanel = new PIXI.Graphics();
     resultPanel.beginFill(0x0d1520, 0.95);
     resultPanel.lineStyle(1, 0x294a66, 0.75);
     resultPanel.drawRoundedRect(0, 0, POP_W - 72, 74, 14);
     resultPanel.endFill();
-    resultPanel.position.set(px + 36, py + 442);
+    resultPanel.position.set(px + 36, py + 521);
     this.container.addChild(resultPanel);
-
-    const divider = new PIXI.Graphics();
-    divider.lineStyle(1, 0x2e86c1, 0.3);
-    divider.moveTo(px + 42, py + 432);
-    divider.lineTo(px + POP_W - 42, py + 432);
-    this.container.addChild(divider);
 
     // 결과 배지
     this._resultBadge = new PIXI.Text('실험 결과가 여기에 표시됩니다', {
@@ -155,7 +144,7 @@ export class ExperimentPopup {
       align: 'center', wordWrap: true, wordWrapWidth: POP_W - 120,
     });
     this._resultBadge.anchor.set(0.5, 0.5);
-    this._resultBadge.position.set(midX, py + 480);
+    this._resultBadge.position.set(midX, py + 558);
     this.container.addChild(this._resultBadge);
 
     // PPE 경고 체크
@@ -232,7 +221,6 @@ export class ExperimentPopup {
     proceedBtn.cursor = 'pointer';
     proceedBtn.on('pointerdown', () => {
       this.statusManager?.applyDamage(penalty.damage, penalty.reason);
-      this.safetySystem.markPenaltyApplied(this.experimentType);
       this.container.removeChild(warn);
       warn.destroy({ children: true });
       this._ppeWarning = null;
@@ -268,7 +256,7 @@ export class ExperimentPopup {
 
     let text, color;
     if (this.experimentType === 'streak') {
-      const label = result === 'black' ? '검은색' : result === 'white' ? '흰색' : '없음 (무색)';
+      const label = result === 'black' ? '검은색' : result === 'white' ? '흰색' : '해당 없음';
       text = `조흔색: ${label}`;
       color = 0x2ecc71;
     } else if (this.experimentType === 'acid') {

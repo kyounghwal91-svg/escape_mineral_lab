@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1776431261722,
+  "lastScanned": 1776900009413,
   "projectRoot": "C:\\Users\\USER\\Documents\\Project_AI\\escape_min",
   "techStack": {
     "languages": [
@@ -59,7 +59,7 @@
       "path": "dist",
       "purpose": "Distribution/build output",
       "fileCount": 1,
-      "lastAccessed": 1776431261647,
+      "lastAccessed": 1776900009347,
       "keyFiles": [
         "index.html"
       ]
@@ -68,7 +68,7 @@
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 5,
-      "lastAccessed": 1776431261667,
+      "lastAccessed": 1776900009349,
       "keyFiles": [
         "CLAUDE.md",
         "Gemini01_[기획서] 탈출! 미치광이.md",
@@ -77,25 +77,11 @@
         "PROGRESS.md"
       ]
     },
-    "escape_lab_game": {
-      "path": "escape_lab_game",
-      "purpose": null,
-      "fileCount": 0,
-      "lastAccessed": 1776431261669,
-      "keyFiles": []
-    },
-    "escape_mineral_lab": {
-      "path": "escape_mineral_lab",
-      "purpose": null,
-      "fileCount": 1,
-      "lastAccessed": 1776431261670,
-      "keyFiles": []
-    },
     "public": {
       "path": "public",
       "purpose": "Public files",
       "fileCount": 2,
-      "lastAccessed": 1776431261671,
+      "lastAccessed": 1776900009371,
       "keyFiles": [
         "config.txt",
         "favicon.ico"
@@ -105,7 +91,7 @@
       "path": "src",
       "purpose": "Source code",
       "fileCount": 1,
-      "lastAccessed": 1776431261674,
+      "lastAccessed": 1776900009372,
       "keyFiles": [
         "main.js"
       ]
@@ -114,7 +100,7 @@
       "path": "dist\\assets",
       "purpose": "Static assets",
       "fileCount": 12,
-      "lastAccessed": 1776431261686,
+      "lastAccessed": 1776900009373,
       "keyFiles": [
         "BaseScene-Gi0SdvSI.js",
         "DoorScene-K3ZGWSv8.js",
@@ -125,7 +111,7 @@
       "path": "src\\data",
       "purpose": "Data files",
       "fileCount": 2,
-      "lastAccessed": 1776431261689,
+      "lastAccessed": 1776900009374,
       "keyFiles": [
         "audio-manifest.js",
         "minerals.js"
@@ -134,69 +120,45 @@
   },
   "hotPaths": [
     {
+      "path": "src\\ui\\ExperimentPopup.js",
+      "accessCount": 16,
+      "lastAccessed": 1776912278102,
+      "type": "file"
+    },
+    {
       "path": "src\\scenes\\LabScene.js",
-      "accessCount": 31,
-      "lastAccessed": 1776433852562,
-      "type": "directory"
+      "accessCount": 10,
+      "lastAccessed": 1776911937996,
+      "type": "file"
     },
     {
-      "path": "src\\scenes\\DoorScene.js",
-      "accessCount": 12,
-      "lastAccessed": 1776434325905,
-      "type": "directory"
+      "path": "src\\effects\\AcidEffect.js",
+      "accessCount": 8,
+      "lastAccessed": 1776912670049,
+      "type": "file"
     },
     {
-      "path": "src\\scenes\\EquipmentScene.js",
+      "path": "src\\effects\\MagnetEffect.js",
       "accessCount": 4,
-      "lastAccessed": 1776431568207,
+      "lastAccessed": 1776912734523,
       "type": "file"
     },
     {
-      "path": "src",
-      "accessCount": 4,
-      "lastAccessed": 1776434129546,
-      "type": "directory"
-    },
-    {
-      "path": "src\\ui\\UIManager.js",
-      "accessCount": 3,
-      "lastAccessed": 1776431479280,
-      "type": "directory"
-    },
-    {
-      "path": "src\\ui\\HardnessComparePopup.js",
-      "accessCount": 3,
-      "lastAccessed": 1776431831859,
-      "type": "file"
-    },
-    {
-      "path": "src\\scenes\\ResultScene.js",
-      "accessCount": 3,
-      "lastAccessed": 1776434343621,
-      "type": "file"
-    },
-    {
-      "path": "progress.md",
-      "accessCount": 3,
-      "lastAccessed": 1776434519955,
-      "type": "file"
-    },
-    {
-      "path": "src\\data\\minerals.js",
+      "path": "src\\systems\\SafetySystem.js",
       "accessCount": 2,
-      "lastAccessed": 1776432166780,
+      "lastAccessed": 1776900990072,
       "type": "file"
     },
     {
-      "path": "src\\systems\\MineralManager.js",
-      "accessCount": 2,
-      "lastAccessed": 1776432317897,
-      "type": "directory"
-    },
-    {
-      "path": "",
+      "path": "src\\effects\\ScratchEffect.js",
       "accessCount": 1,
-      "lastAccessed": 1776433917297,
+      "lastAccessed": 1776911673489,
+      "type": "file"
+    },
+    {
+      "path": "src\\effects",
+      "accessCount": 1,
+      "lastAccessed": 1776911681459,
       "type": "directory"
     }
   ],

@@ -78,7 +78,7 @@ export class MagnetEffect {
 
     // 안내 텍스트
     this._hint = new PIXI.Text('광물을 클립 근처로 가져가보세요', {
-      fontFamily: 'Arial', fontSize: 13, fill: 0x8ea5b8, align: 'center',
+      fontFamily: 'Arial', fontSize: 13, fill: 0xffffff, align: 'center',
     });
     this._hint.anchor.set(0.5, 0);
     this._hint.position.set(W / 2, H - 30);
@@ -125,7 +125,7 @@ export class MagnetEffect {
 
     const mx = this._mineralCont.x;
     const my = this._mineralCont.y;
-    const threshold = 90;
+    const threshold = this.mineralId === 'magnetite' ? 52 : 90;
 
     if (this.magnetic) {
       for (const clipObj of this._clipObjects) {
@@ -164,7 +164,7 @@ export class MagnetEffect {
     const startX = clipObj.sprite.x;
     const startY = clipObj.sprite.y;
     let frame = 0;
-    const duration = 10;
+    const duration = this.mineralId === 'magnetite' ? 28 : 10;
 
     const tick = () => {
       frame++;

@@ -179,20 +179,20 @@ export class AcidEffect {
     let elapsed = 0;
     this._ticker = (delta) => {
       elapsed += delta;
-      if (elapsed % 3 < delta + 0.1) {
+      if (elapsed % 5 < delta + 0.1) {
         const bubble = new PIXI.Graphics();
         const angle = Math.random() * Math.PI * 2;
-        const orbit = 18 + Math.random() * 26;
-        const r = 3 + Math.random() * 5;
-        bubble.lineStyle(1, 0xffffff, 0.95);
-        bubble.beginFill(0xffffff, 0.72);
-        bubble.drawCircle(0, 0, r);
+        const orbit = 14 + Math.random() * 18;
+        const r = 2 + Math.random() * 3;
+        bubble.lineStyle(1, 0xbbbbbb, 0.7);
+        bubble.beginFill(0xcccccc, 0.45);
+        bubble.drawCircle(0, 0, r * 0.7);
         bubble.endFill();
         bubble.x = this._mineralCenter.x + Math.cos(angle) * orbit;
         bubble.y = this._mineralCenter.y + Math.sin(angle) * (orbit * 0.45) + 10;
-        bubble.vx = (Math.random() - 0.5) * 0.35;
-        bubble.vy = -(0.2 + Math.random() * 0.45);
-        bubble.grow = 0.008 + Math.random() * 0.014;
+        bubble.vx = 0;
+        bubble.vy = 0;
+        bubble.grow = 0.003 + Math.random() * 0.007;
         bubble.life = 1.0;
         this._bubbleLayer.addChild(bubble);
         this._bubbles.push(bubble);
@@ -203,7 +203,7 @@ export class AcidEffect {
         b.y += b.vy;
         b.scale.x += b.grow;
         b.scale.y += b.grow;
-        b.life -= 0.028;
+        b.life -= 0.016;
         b.alpha = Math.min(1, b.life * 1.1);
         if (b.life <= 0) {
           this._bubbleLayer.removeChild(b);
