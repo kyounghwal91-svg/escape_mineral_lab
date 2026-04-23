@@ -103,6 +103,7 @@ export default class EquipmentScene extends BaseScene {
     this.statusManager = data.statusManager ?? new StatusManager();
     this.uiManager = new UIManager(this.sceneManager.app, this.statusManager);
     this.uiManager.init();
+    this.uiManager.setDialoguePosition(190, 720 - 170);
 
     if (data.mineralManager) {
       this.mineralManager = data.mineralManager;

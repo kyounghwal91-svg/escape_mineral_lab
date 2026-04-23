@@ -20,6 +20,7 @@ export class MagnetEffect {
     this._onDragUp = null;
     this._stickTickers = [];
     this._doneTimeout = null;
+    this._attractSoundCount = 0;
 
     this._build();
   }
@@ -134,9 +135,12 @@ export class MagnetEffect {
         if (dist < threshold) {
           clipObj.stuck = true;
           this._animateStick(clipObj);
+          if (this._attractSoundCount < 3) {
+            AudioManager.instance.playSFX('magnet_attract');
+            this._attractSoundCount++;
+          }
           if (!this._resultFired) {
             this._resultFired = true;
-            AudioManager.instance.playSFX('magnet_attract');
             if (this._hint) this._hint.visible = false;
             this._doneTimeout = setTimeout(() => {
               if (this._onDone) this._onDone(true);

@@ -73,13 +73,13 @@ export class UIManager {
 
     const dialogBg = new PIXI.Graphics();
     dialogBg.beginFill(0x000000, 0.75);
-    dialogBg.drawRoundedRect(0, 0, 900, 100, 8);
+    dialogBg.drawRoundedRect(0, 0, 760, 100, 8);
     dialogBg.endFill();
     this._dialogBox.addChild(dialogBg);
 
     this._dialogText = new PIXI.Text('', {
       fontFamily: 'Arial', fontSize: 18, fill: 0xffffff,
-      wordWrap: true, wordWrapWidth: 860, lineHeight: 22,
+      wordWrap: true, wordWrapWidth: 720, lineHeight: 22,
     });
     this._dialogText.position.set(20, 15);
     this._dialogBox.addChild(this._dialogText);
@@ -92,11 +92,11 @@ export class UIManager {
     this._dialogArrow.lineTo(7, 10);
     this._dialogArrow.closePath();
     this._dialogArrow.endFill();
-    this._dialogArrow.position.set(860, 75);
+    this._dialogArrow.position.set(720, 75);
     this._dialogBox.addChild(this._dialogArrow);
     this._arrowTime = 0;
 
-    this._dialogBox.position.set(190, H - 170);
+    this._dialogBox.position.set(260, 100);
     this.container.addChild(this._dialogBox);
 
     // === 데미지 오버레이 ===
@@ -170,6 +170,10 @@ export class UIManager {
    * @param {number} dx
    * @param {number} dy
    */
+  setDialoguePosition(x, y) {
+    this._dialogBox.position.set(x, y);
+  }
+
   moveMuteBtn(dx, dy) {
     this._muteBtnBg.x += dx;
     this._muteBtnBg.y += dy;

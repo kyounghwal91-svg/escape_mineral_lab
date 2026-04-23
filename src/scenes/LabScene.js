@@ -17,11 +17,11 @@ const TABLE_LAYOUT = {
 };
 
 const MINERAL_POSITIONS = [
-  { cx: 350, cy: 458 },  // quartz  (?앹쁺 ???쇰꺼 ?섎떒 湲곗?)
-  { cx: 487, cy: 481 },  // feldspar
+  { cx: 291, cy: 458 },  // quartz  (?앹쁺 ???쇰꺼 ?섎떒 湲곗?)
+  { cx: 456, cy: 481 },  // feldspar
   { cx: 644, cy: 481 },  // biotite
-  { cx: 801, cy: 481 },  // calcite
-  { cx: 958, cy: 481 },  // magnetite (x 湲곗〈 ?좎?)
+  { cx: 832, cy: 481 },  // calcite
+  { cx: 1020, cy: 481 }, // magnetite (x 湲곗〈 ?좎?)
 ];
 
 const LAB_OBJECT_SCALE = 1.3;
@@ -569,7 +569,7 @@ export default class LabScene extends BaseScene {
 
   _createMineralSprite(mineral, cx, cy) {
     const isQuartz = mineral.id === 'quartz';
-    const spriteSize = 90 * LAB_OBJECT_SCALE;
+    const spriteSize = 90 * LAB_OBJECT_SCALE * 1.2;
     const halfWidth = spriteSize / 2;
     const spriteCenterY = 46 * LAB_OBJECT_SCALE;
     const labelY = (isQuartz ? 97 : 79) * LAB_OBJECT_SCALE;
@@ -621,7 +621,7 @@ export default class LabScene extends BaseScene {
       cont.position.set(tx, ty); cont.zIndex = 20;
       const sprite = PIXI.Sprite.from(`images/${td.img}`);
       sprite.anchor.set(0.5);
-      const targetSize = 90 * LAB_OBJECT_SCALE;
+      const targetSize = 90 * LAB_OBJECT_SCALE * 1.2;
       const scale = Math.min(targetSize / sprite.texture.width, targetSize / sprite.texture.height);
       sprite.scale.set(scale);
       cont.addChild(sprite);

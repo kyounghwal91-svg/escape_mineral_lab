@@ -121,33 +121,51 @@
   "hotPaths": [
     {
       "path": "src\\ui\\ExperimentPopup.js",
-      "accessCount": 16,
-      "lastAccessed": 1776912278102,
+      "accessCount": 17,
+      "lastAccessed": 1776914119083,
       "type": "file"
     },
     {
       "path": "src\\scenes\\LabScene.js",
-      "accessCount": 10,
-      "lastAccessed": 1776911937996,
+      "accessCount": 13,
+      "lastAccessed": 1776914274181,
       "type": "file"
     },
     {
       "path": "src\\effects\\AcidEffect.js",
-      "accessCount": 8,
-      "lastAccessed": 1776912670049,
+      "accessCount": 9,
+      "lastAccessed": 1776914124622,
       "type": "file"
     },
     {
       "path": "src\\effects\\MagnetEffect.js",
+      "accessCount": 8,
+      "lastAccessed": 1776914119568,
+      "type": "file"
+    },
+    {
+      "path": "src\\ui\\UIManager.js",
       "accessCount": 4,
-      "lastAccessed": 1776912734523,
+      "lastAccessed": 1776914564790,
       "type": "file"
     },
     {
       "path": "src\\systems\\SafetySystem.js",
-      "accessCount": 2,
-      "lastAccessed": 1776900990072,
+      "accessCount": 3,
+      "lastAccessed": 1776914098329,
       "type": "file"
+    },
+    {
+      "path": "src\\scenes\\EquipmentScene.js",
+      "accessCount": 3,
+      "lastAccessed": 1776914573343,
+      "type": "directory"
+    },
+    {
+      "path": "src\\systems\\AudioManager.js",
+      "accessCount": 2,
+      "lastAccessed": 1776913980271,
+      "type": "directory"
     },
     {
       "path": "src\\effects\\ScratchEffect.js",
@@ -159,6 +177,12 @@
       "path": "src\\effects",
       "accessCount": 1,
       "lastAccessed": 1776911681459,
+      "type": "directory"
+    },
+    {
+      "path": "src\\data\\audio-manifest.js",
+      "accessCount": 1,
+      "lastAccessed": 1776913990834,
       "type": "directory"
     }
   ],
