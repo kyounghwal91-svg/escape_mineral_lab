@@ -745,7 +745,7 @@ export default class DoorScene extends BaseScene {
     const COLS = [
       { key: 'name',     w: 80, label: '광물' },
       { key: 'color',    w: 46, label: '색' },
-      { key: 'streak',   w: 48, label: '조흔' },
+      { key: 'streak',   w: 48, label: '조흔색' },
       { key: 'acid',     w: 54, label: '염산' },
       { key: 'magnet',   w: 44, label: '자성' },
       { key: 'hardness', w: 48, label: '긁힘' },
@@ -778,9 +778,11 @@ export default class DoorScene extends BaseScene {
         const m = this.mineralManager.getMineral(mid);
         return { text: m?.colorLabel ?? '?', color: 0x9dd8ff };
       },
-      streak: (r) => r.streakTested
-        ? { text: ({ none: '없음', white: '흰색', black: '검정' })[r.streakColor] || r.streakColor, color: 0x73e2a7 }
-        : { text: '?', color: 0x2e4057 },
+      streak: (r, mid) => {
+        if (mid === 'quartz') return { text: '해당 없음', color: 0x4a6580 };
+        if (!r.streakTested) return { text: '?', color: 0x2e4057 };
+        return { text: ({ none: '없음', white: '흰색', black: '검정' })[r.streakColor] || r.streakColor, color: 0x73e2a7 };
+      },
       acid: (r) => r.acidTested
         ? { text: r.acidReacted ? '거품✓' : '무반응', color: r.acidReacted ? 0xf3b562 : 0x90a4b8 }
         : { text: '?', color: 0x2e4057 },
@@ -788,7 +790,7 @@ export default class DoorScene extends BaseScene {
         ? { text: r.magnetic ? '있음✓' : '없음', color: r.magnetic ? 0xc792ea : 0x90a4b8 }
         : { text: '?', color: 0x2e4057 },
       hardness: (r, mid) => {
-        if (NO_HARDNESS.includes(mid)) return { text: '해당없음', color: 0x4a6580 };
+        if (NO_HARDNESS.includes(mid)) return { text: '해당 없음', color: 0x4a6580 };
         if (!r.hardnessTested) return { text: '?', color: 0x2e4057 };
         return { text: r.hardness === 'high' ? '없음' : '있음', color: 0x55d6c2 };
       },
