@@ -339,4 +339,8 @@ export class MineralManager {
     const record = this.experimentRecords[mineralId];
     return !!(record && (record.streakTested || record.acidTested || record.magnetTested || record.hardnessTested));
   }
+
+  areAllHintsRevealed() {
+    return this.hintPanelProgress >= HINT_REVEAL_ORDER.length;
+  }
 }

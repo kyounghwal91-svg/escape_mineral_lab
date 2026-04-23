@@ -808,10 +808,7 @@ export default class LabScene extends BaseScene {
       if (hint) {
         this.uiManager.showDialogue(`새로운 힌트 해제: "${hint.text}"`);
       } else {
-        const newClues = this.mineralManager.tryUnlockClues();
-        if (newClues.length > 0) {
-          this.uiManager.showDialogue(`새 단서 발견: "${newClues[0].text}"`);
-        }
+        this.mineralManager.tryUnlockClues();
       }
     });
     this._mountPopup(popup);
@@ -834,10 +831,7 @@ export default class LabScene extends BaseScene {
       if (hint) {
         this.uiManager.showDialogue(`새로운 힌트 해제: "${hint.text}"`);
       } else {
-        const newClues = this.mineralManager.tryUnlockClues();
-        if (newClues.length > 0) {
-          this.uiManager.showDialogue(`새 단서 발견: "${newClues[0].text}"`);
-        }
+        this.mineralManager.tryUnlockClues();
       }
     });
     this._mountPopup(popup);

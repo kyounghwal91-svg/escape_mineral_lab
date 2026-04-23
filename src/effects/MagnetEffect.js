@@ -77,13 +77,6 @@ export class MagnetEffect {
 
     mineralCont.on('pointerdown', (e) => this._startDrag(e));
 
-    // 안내 텍스트
-    this._hint = new PIXI.Text('광물을 클립 근처로 가져가보세요', {
-      fontFamily: 'Arial', fontSize: 13, fill: 0xffffff, align: 'center',
-    });
-    this._hint.anchor.set(0.5, 0);
-    this._hint.position.set(W / 2, H - 30);
-    this.container.addChild(this._hint);
   }
 
   _startDrag(e) {

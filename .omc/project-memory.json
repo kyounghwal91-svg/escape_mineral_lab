@@ -121,26 +121,26 @@
   "hotPaths": [
     {
       "path": "src\\ui\\ExperimentPopup.js",
-      "accessCount": 17,
-      "lastAccessed": 1776914119083,
+      "accessCount": 22,
+      "lastAccessed": 1776925240509,
       "type": "file"
     },
     {
       "path": "src\\scenes\\LabScene.js",
-      "accessCount": 13,
-      "lastAccessed": 1776914274181,
+      "accessCount": 17,
+      "lastAccessed": 1776924939831,
       "type": "file"
     },
     {
       "path": "src\\effects\\AcidEffect.js",
-      "accessCount": 9,
-      "lastAccessed": 1776914124622,
+      "accessCount": 15,
+      "lastAccessed": 1776925471908,
       "type": "file"
     },
     {
       "path": "src\\effects\\MagnetEffect.js",
-      "accessCount": 8,
-      "lastAccessed": 1776914119568,
+      "accessCount": 10,
+      "lastAccessed": 1776925121795,
       "type": "file"
     },
     {
@@ -174,6 +174,18 @@
       "type": "directory"
     },
     {
+      "path": "src\\systems\\MineralManager.js",
+      "accessCount": 2,
+      "lastAccessed": 1776924965877,
+      "type": "file"
+    },
+    {
+      "path": "src\\ui\\HardnessComparePopup.js",
+      "accessCount": 2,
+      "lastAccessed": 1776924990852,
+      "type": "file"
+    },
+    {
       "path": "src\\effects\\ScratchEffect.js",
       "accessCount": 1,
       "lastAccessed": 1776911673489,
@@ -189,6 +201,12 @@
       "path": "src\\data\\audio-manifest.js",
       "accessCount": 1,
       "lastAccessed": 1776913990834,
+      "type": "directory"
+    },
+    {
+      "path": "src",
+      "accessCount": 1,
+      "lastAccessed": 1776924978706,
       "type": "directory"
     }
   ],

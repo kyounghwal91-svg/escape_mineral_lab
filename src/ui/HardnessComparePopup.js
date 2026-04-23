@@ -389,9 +389,11 @@ export class HardnessComparePopup {
     this.mineralManager?.recordExperiment(this.quartz.id, 'hardness', this.quartz.hardness);
     this.mineralManager?.recordExperiment(this.calcite.id, 'hardness', this.calcite.hardness);
 
-    this.uiManager?.showDialogue(
-      `굳기 비교 결과: ${this.quartz.name}이 ${this.calcite.name}을 긁었습니다. 도감에 기록됨.`
-    );
+    if (!this.mineralManager?.areAllHintsRevealed()) {
+      this.uiManager?.showDialogue(
+        `굳기 비교 결과: ${this.quartz.name}이 ${this.calcite.name}을 긁었습니다. 도감에 기록됨.`
+      );
+    }
   }
 
   onClose(cb) {

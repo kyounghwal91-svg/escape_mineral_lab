@@ -39,22 +39,6 @@ export class AcidEffect {
     tray.endFill();
     this.container.addChild(tray);
 
-    const bottleBase = PIXI.Sprite.from('images/Hcl_bottle.png');
-    bottleBase.anchor.set(0.5, 1);
-    bottleBase.height = 130;
-    bottleBase.scale.x = bottleBase.scale.y;
-    bottleBase.position.set(440, H - 18);
-    bottleBase.eventMode = 'none';
-    this.container.addChild(bottleBase);
-
-    const bottleFront = PIXI.Sprite.from('images/Hcl_bottle_only.png');
-    bottleFront.anchor.set(0.5, 1);
-    bottleFront.height = 130;
-    bottleFront.scale.x = bottleFront.scale.y;
-    bottleFront.position.set(440, H - 18);
-    bottleFront.eventMode = 'none';
-    this.container.addChild(bottleFront);
-
     const petriX = W / 2;
     const petriY = H - 52;
     this._petriCenter = { x: petriX, y: petriY };
@@ -76,24 +60,40 @@ export class AcidEffect {
     mineral.eventMode = 'none';
     this.container.addChild(mineral);
 
-    this._bubbleLayer = new PIXI.Container();
-    this.container.addChild(this._bubbleLayer);
-
     const dropperCont = new PIXI.Container();
     const dropperSprite = PIXI.Sprite.from('images/Hcl_bottle_spoide.png');
     dropperSprite.anchor.set(0.5, 0);
     dropperSprite.height = 150;
     dropperSprite.scale.x = dropperSprite.scale.y;
     dropperCont.addChild(dropperSprite);
-    dropperCont.position.set(410, 18);
+    dropperCont.position.set(442, 80);
     dropperCont.eventMode = 'static';
     dropperCont.cursor = 'grab';
     this.container.addChild(dropperCont);
 
     this._dropperCont = dropperCont;
-    this._dropperOrigin = { x: 410, y: 18 };
+    this._dropperOrigin = { x: 442, y: 80 };
 
     dropperCont.on('pointerdown', (e) => this._startDrag(e));
+
+    const bottleBase = PIXI.Sprite.from('images/Hcl_bottle.png');
+    bottleBase.anchor.set(0.5, 1);
+    bottleBase.height = 130;
+    bottleBase.scale.x = bottleBase.scale.y;
+    bottleBase.position.set(440, H - 18);
+    bottleBase.eventMode = 'none';
+    this.container.addChild(bottleBase);
+
+    const bottleFront = PIXI.Sprite.from('images/Hcl_bottle_only.png');
+    bottleFront.anchor.set(0.5, 1);
+    bottleFront.height = 130;
+    bottleFront.scale.x = bottleFront.scale.y;
+    bottleFront.position.set(440, H - 18);
+    bottleFront.eventMode = 'none';
+    this.container.addChild(bottleFront);
+
+    this._bubbleLayer = new PIXI.Container();
+    this.container.addChild(this._bubbleLayer);
   }
 
   _startDrag(e) {

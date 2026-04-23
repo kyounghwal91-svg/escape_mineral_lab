@@ -110,9 +110,9 @@ export class ExperimentPopup {
 
     // 안내 텍스트
     const instrMap = {
-      streak: '🖐 긁어보세요',
-      acid:   '💧 떨어뜨려보세요',
-      magnet: '🔗 접근시켜보세요',
+      streak: '🖐 광물을 조흔판에 긁어 보세요.',
+      acid:   '💧 광물에 묽은 염산 방울을 떨어뜨려 보세요.',
+      magnet: '🔗 광물을 클립에 접근시켜 보세요.',
     };
     const instr = new PIXI.Text(instrMap[this.experimentType] ?? '', {
       fontFamily: 'Arial', fontSize: 20, fill: 0x8ea5b8, fontWeight: 'bold', align: 'center',
@@ -272,7 +272,9 @@ export class ExperimentPopup {
     });
     this._resultBadge.text = text;
 
-    this.uiManager?.showDialogue(`${this.mineral.name} — ${text}  (도감에 기록됨)`);
+    if (!this.mineralManager?.areAllHintsRevealed()) {
+      this.uiManager?.showDialogue(`${this.mineral.name} — ${text}  (도감에 기록됨)`);
+    }
 
     if (this._onDone) {
       this._onDone(this.mineral.id);
