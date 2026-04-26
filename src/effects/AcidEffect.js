@@ -179,14 +179,14 @@ export class AcidEffect {
     let elapsed = 0;
     this._ticker = (delta) => {
       elapsed += delta;
-      if (elapsed % 5 < delta + 0.1) {
+      if (elapsed % 10 < delta + 0.1) {
         const bubble = new PIXI.Graphics();
         const angle = Math.random() * Math.PI * 2;
         const orbit = 14 + Math.random() * 18;
         const r = 2 + Math.random() * 3;
-        bubble.lineStyle(1, 0xbbbbbb, 0.7);
+        bubble.lineStyle(1.5, 0x868e96, 1);
         bubble.beginFill(0xcccccc, 0.45);
-        bubble.drawCircle(0, 0, r * 0.7);
+        bubble.drawCircle(0, 0, r * 1.4);
         bubble.endFill();
         bubble.x = this._mineralCenter.x + Math.cos(angle) * orbit;
         bubble.y = this._mineralCenter.y + Math.sin(angle) * (orbit * 0.45) + 10;
