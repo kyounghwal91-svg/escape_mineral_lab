@@ -73,6 +73,13 @@ export default class LabScene extends BaseScene {
       'images/exit_door.png'
     ]);
 
+    // 결과 씬 이미지를 백그라운드에서 미리 로드 (await 없이 — Lab 로딩 블로킹 방지)
+    PIXI.Assets.load([
+      'images/result_sucess.png',
+      'images/result_barely.png',
+      'images/result_failed.png',
+    ]);
+
     this.statusManager = data.statusManager ?? new StatusManager();
     this.mineralManager = data.mineralManager ?? new MineralManager();
     if (!data.mineralManager) this.mineralManager.init();
