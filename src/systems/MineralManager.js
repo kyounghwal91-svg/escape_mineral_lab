@@ -110,19 +110,7 @@ export class MineralManager {
   }
 
   generateKeyMinerals() {
-    const { pairA, pairB } = KEY_PAIRING_RULES;
-    const pickA = pairA[Math.floor(Math.random() * pairA.length)];
-    const pickB = pairB[Math.floor(Math.random() * pairB.length)];
-    const rest = MINERALS.map((mineral) => mineral.id).filter((id) => id !== pickA && id !== pickB);
-    const pickC = rest[Math.floor(Math.random() * rest.length)];
-    const keys = [pickA, pickB, pickC];
-
-    for (let i = keys.length - 1; i > 0; i -= 1) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [keys[i], keys[j]] = [keys[j], keys[i]];
-    }
-
-    return keys;
+    return ['quartz', 'calcite', 'magnetite'];
   }
 
   getClue(index, isDetailed = false) {

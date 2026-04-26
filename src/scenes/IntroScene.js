@@ -7,6 +7,10 @@ export default class IntroScene extends BaseScene {
     super();
     this._bg = null;
     this._btn = null;
+    this._animateFn = null;
+    this._keyCount = 0;
+    this._secretContainer = null;
+    this._keyHandler = null;
   }
 
   async onEnter(data = {}) {
@@ -69,6 +73,20 @@ export default class IntroScene extends BaseScene {
       this.sceneManager?.changeScene('equipment');
     });
     this.container.addChild(this._btn);
+
+    // 시연용 이스터에그: '1' 5회 이상 연속 입력 시 엔딩 바로가기 버튼 노출
+    this._keyCount = 0;
+    this._keyHandler = (e) => {
+      if (e.key === '1') {
+        this._keyCount += 1;
+        if (this._keyCount >= 5 && !this._secretContainer) {
+          this._showSecretButtons();
+        }
+      } else {
+        this._keyCount = 0;
+      }
+    };
+    window.addEventListener('keydown', this._keyHandler);
   }
 
   async onExit() {
@@ -76,7 +94,61 @@ export default class IntroScene extends BaseScene {
     if (this._animateFn) {
       this.sceneManager.app.ticker.remove(this._animateFn);
     }
+    if (this._keyHandler) {
+      window.removeEventListener('keydown', this._keyHandler);
+      this._keyHandler = null;
+    }
     this._btn?.removeAllListeners();
+  }
+
+  _showSecretButtons() {
+    const W = 1280, H = 720;
+    this._secretContainer = new PIXI.Container();
+
+    const panel = new PIXI.Graphics();
+    panel.beginFill(0x000000, 0.75);
+    panel.drawRoundedRect(W / 2 - 265, H - 78, 530, 62, 10);
+    panel.endFill();
+    this._secretContainer.addChild(panel);
+
+    const label = new PIXI.Text('시연 바로가기', {
+      fontFamily: 'Arial', fontSize: 13, fill: 0x888888,
+    });
+    label.anchor.set(0.5, 0);
+    label.position.set(W / 2, H - 74);
+    this._secretContainer.addChild(label);
+
+    const barelyBtn = this._createSecretButton('겨우 탈출', W / 2 - 135, H - 47, 0x2e86c1, () => {
+      this.sceneManager?.changeScene('result', { condition: 'barely' });
+    });
+    this._secretContainer.addChild(barelyBtn);
+
+    const failBtn = this._createSecretButton('실패', W / 2 + 135, H - 47, 0x922b21, () => {
+      this.sceneManager?.changeScene('result', { condition: 'failure' });
+    });
+    this._secretContainer.addChild(failBtn);
+
+    this.container.addChild(this._secretContainer);
+  }
+
+  _createSecretButton(label, x, y, color, onClick) {
+    const btn = new PIXI.Container();
+    const BW = 230, BH = 42;
+    const bg = new PIXI.Graphics();
+    bg.beginFill(color);
+    bg.drawRoundedRect(-BW / 2, -BH / 2, BW, BH, 10);
+    bg.endFill();
+    btn.addChild(bg);
+    const text = new PIXI.Text(label, { fontFamily: 'Arial', fontSize: 20, fill: 0xffffff, fontWeight: 'bold' });
+    text.anchor.set(0.5);
+    btn.addChild(text);
+    btn.position.set(x, y);
+    btn.eventMode = 'static';
+    btn.cursor = 'pointer';
+    btn.on('pointerover', () => { bg.alpha = 0.8; });
+    btn.on('pointerout',  () => { bg.alpha = 1.0; });
+    btn.on('pointerdown', () => { AudioManager.instance.playSFX('btn_click'); onClick(); });
+    return btn;
   }
 
   _createButton(label, x, y, color, onClick) {
